@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  backend:
+    image: ${DOCKER_REGISTRY-}rrsapi
+    build:
+      context: .
+      dockerfile: RRS.Api/Dockerfile
+  
+  client:
+    image: client
+    build:
+      context: ./rrs-client
+      dockerfile: Dockerfile
+
+  proxy:
+    image: nginx:mainline

@@ -1,0 +1,47 @@
+name: dockercompose16649268336777903345
+services:
+  backend:
+    build:
+      context: D:\_Programming\RestaurantReservationSite
+      dockerfile: RRS.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+    image: rrsapi
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 8080
+        published: "5000"
+        protocol: tcp
+  client:
+    build:
+      context: D:\_Programming\RestaurantReservationSite\rrs-client
+      dockerfile: Dockerfile
+    image: client
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 3000
+        published: "5001"
+        protocol: tcp
+  proxy:
+    image: nginx:mainline
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "80"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: D:\_Programming\RestaurantReservationSite\nginx.conf
+        target: /etc/nginx/nginx.conf
+        bind:
+          create_host_path: true
+networks:
+  default:
+    name: dockercompose16649268336777903345_default
