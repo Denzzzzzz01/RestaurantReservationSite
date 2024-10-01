@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: RRS.Api/Dockerfile
+    depends_on:
+      - postgres.db
   
   client:
     image: client
@@ -13,5 +15,20 @@ services:
       context: ./rrs-client
       dockerfile: Dockerfile
 
-  proxy:
-    image: nginx:mainline
+  # proxy:
+  #   image: nginx:mainline
+
+  postgres.db:
+    image: postgres:latest
+    container_name: postgres.db
+    environment:
+        POSTGRES_DB: RRSDB
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: 1q2w3e4r
+    volumes:
+        - postgres-data:/var/lib/postgresql/data
+    ports:
+        - "5432:5432"
+        
+volumes:
+  postgres-data:

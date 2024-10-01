@@ -10,5 +10,26 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        var roles = new List<IdentityRole<Guid>>
+        {
+            new IdentityRole<Guid>
+            {
+                Id = Guid.NewGuid(),
+                Name= "Admin",
+                NormalizedName = "ADMIN"
+            },
+            new IdentityRole<Guid>
+            {
+                Id = Guid.NewGuid(),
+                Name= "User",
+                NormalizedName = "USER"
+            }
+        };
+        builder.Entity<IdentityRole<Guid>>().HasData(roles);
+    }
 
 }

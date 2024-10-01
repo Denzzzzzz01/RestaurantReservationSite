@@ -1,0 +1,12 @@
+D:\_Programming\RestaurantReservationSite\RRS.Core\bin\Debug\net8.0\RRS.Core.deps.json
+D:\_Programming\RestaurantReservationSite\RRS.Core\bin\Debug\net8.0\RRS.Core.dll
+D:\_Programming\RestaurantReservationSite\RRS.Core\bin\Debug\net8.0\RRS.Core.pdb
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.csproj.AssemblyReference.cache
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.AssemblyInfoInputs.cache
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.AssemblyInfo.cs
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.csproj.CoreCompileInputs.cache
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.dll
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\refint\RRS.Core.dll
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.pdb
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\ref\RRS.Core.dll
