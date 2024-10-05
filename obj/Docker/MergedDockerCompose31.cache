@@ -1,0 +1,77 @@
+name: dockercompose16649268336777903345
+services:
+  backend:
+    build:
+      context: D:\_Programming\RestaurantReservationSite
+      dockerfile: RRS.Api/Dockerfile
+    depends_on:
+      postgres.db:
+        condition: service_started
+        required: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+    image: rrsapi
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 8080
+        published: "5000"
+        protocol: tcp
+  client:
+    build:
+      context: D:\_Programming\RestaurantReservationSite\rrs-client
+      dockerfile: Dockerfile
+    image: client
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 3000
+        published: "5001"
+        protocol: tcp
+  postgres.db:
+    container_name: postgres.db
+    environment:
+      POSTGRES_DB: RRSDB
+      POSTGRES_PASSWORD: 1q2w3e4r
+      POSTGRES_USER: postgres
+    image: postgres:latest
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 5432
+        published: "5432"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+        volume: {}
+  proxy:
+    depends_on:
+      client:
+        condition: service_started
+        required: true
+    image: nginx:mainline
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "80"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: D:\_Programming\RestaurantReservationSite\nginx.conf
+        target: /etc/nginx/nginx.conf
+        bind:
+          create_host_path: true
+networks:
+  default:
+    name: dockercompose16649268336777903345_default
+volumes:
+  postgres-data:
+    name: dockercompose16649268336777903345_postgres-data

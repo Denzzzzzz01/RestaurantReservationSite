@@ -14,6 +14,10 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     {
         base.OnModelCreating(builder);
 
+        builder.ApplyConfiguration(new AppUserConfiguration());
+        builder.ApplyConfiguration(new RestaurantConfiguration());
+        builder.ApplyConfiguration(new RestaurantManagerDataConfiguration());
+
         var roles = new List<IdentityRole<Guid>>
         {
             new IdentityRole<Guid>
@@ -27,9 +31,17 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
                 Id = Guid.NewGuid(),
                 Name= "User",
                 NormalizedName = "USER"
+            },
+            new IdentityRole<Guid>
+            {
+                Id = Guid.NewGuid(),
+                Name= "RestaurantManager",
+                NormalizedName = "RESTAURANTMANAGER"
             }
         };
         builder.Entity<IdentityRole<Guid>>().HasData(roles);
     }
 
+    public DbSet<RestaurantManagerData> RestaurantManagerDatas { get; set; }
+    public DbSet<Restaurant> Restaurants { get; set; }
 }

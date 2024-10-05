@@ -35,3 +35,6 @@ D:\_Programming\RestaurantReservationSite\obj\Debug\docker-compose.dcproj.Assemb
 D:\_Programming\RestaurantReservationSite\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache
 D:\_Programming\RestaurantReservationSite\obj\Debug\docker-compose.dcproj.CopyComplete
 D:\_Programming\RestaurantReservationSite\bin\Debug\System.Text.Json.dll
+D:\_Programming\RestaurantReservationSite\bin\Debug\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\_Programming\RestaurantReservationSite\bin\Debug\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\_Programming\RestaurantReservationSite\bin\Debug\Microsoft.IdentityModel.Protocols.dll

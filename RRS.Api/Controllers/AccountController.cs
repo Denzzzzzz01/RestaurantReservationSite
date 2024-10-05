@@ -1,33 +1,33 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using ProjectManagement.Application.Contracts.Account;
 using RRS.Application.Interfaces;
 using RRS.Core.Models;
+using System.Security.Claims;
 
 namespace RRS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController : ControllerBase
+public class AccountController : BaseController
 {
-    private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly ITokenService _tokenService;
     private readonly ILogger<AccountController> _logger;
     //private readonly ICacheService _cache;
 
-    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService, ILogger<AccountController> logger/*, ICacheService cache*/)
+    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService, ILogger<AccountController> logger/*, ICacheService cache*/) : base(userManager)
     {
-        _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
         _logger = logger;
         //_cache = cache;
     }
 
-    [HttpPost("register")]
+    [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, CancellationToken ct)
     {
         try
@@ -59,7 +59,7 @@ public class AccountController : ControllerBase
                     {
                         Username = user.UserName,
                         Email = user.Email,
-                        Token = _tokenService.CreateToken(user)
+                        Token = await _tokenService.CreateToken(user)
                     };
                     _logger.LogInformation("User registered: {Username}, {Email}", user.UserName, user.Email);
                     //await _cache.SetAsync(cacheKey, user, new DistributedCacheEntryOptions
@@ -83,11 +83,11 @@ public class AccountController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while registering user");
-            return StatusCode(500, ex);
+            return StatusCode(500, new { message = ex.Message });
         }
     }
 
-    [HttpPost("login")]
+    [HttpPost("Login")]
     public async Task<IActionResult> Login(LoginDto loginDto, CancellationToken ct)
     {
         if (!ModelState.IsValid)
@@ -97,36 +97,37 @@ public class AccountController : ControllerBase
         if (user is null)
             return Unauthorized("Invalid Email!");
 
-        var cacheKey = $"User_{loginDto.Email}";
-        //var existingUser = await _cache.GetAsync<AppUser>(cacheKey);
+
+        //var cacheKey = $"User_{loginDto.Email}";  
+        //var existingUser = await _cache.GetAsync<AppUser>(cacheKey);  ////// CHECK THIS !!! //////
         //if (existingUser != null && existingUser.Email.ToLower() == loginDto.Email.ToLower())
         //{
-            _logger.LogInformation("User {Email} found in cache", loginDto.Email);
-            if (!string.IsNullOrEmpty(loginDto.Password))
-            {
-                var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-                if (result.Succeeded)
-                {
-                    var response = new UserResponseDto
-                    {
-                        Username = user.UserName,
-                        Email = user.Email,
-                        Token = _tokenService.CreateToken(user)
-                    };
-                    _logger.LogInformation("User logged in: {Username}, {Email}", user.UserName, user.Email);
-                    return Ok(response);
-                }
-                else
-                {
-                    _logger.LogError("Incorrect password for user {Username}, {Email}", user.UserName, user.Email);
-                    return Unauthorized("Incorrect password");
-                }
-            }
-            else
-            {
-                _logger.LogError("Password not provided for user {Username}, {Email}", user.UserName, user.Email);
-                return Unauthorized("Password not provided");
-            }
+            //_logger.LogInformation("User {Email} found in cache", loginDto.Email);
+            //if (!string.IsNullOrEmpty(loginDto.Password))
+            //{
+            //    var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            //    if (result.Succeeded)
+            //    {
+            //        var response = new UserResponseDto
+            //        {
+            //            Username = user.UserName,
+            //            Email = user.Email,
+            //            Token =  await _tokenService.CreateToken(user)
+            //        };
+            //        _logger.LogInformation("User logged in: {Username}, {Email}", user.UserName, user.Email);
+            //        return Ok(response);
+            //    }
+            //    else
+            //    {
+            //        _logger.LogError("Incorrect password for user {Username}, {Email}", user.UserName, user.Email);
+            //        return Unauthorized("Incorrect password");
+            //    }
+            //}
+            //else
+            //{
+            //    _logger.LogError("Password not provided for user {Username}, {Email}", user.UserName, user.Email);
+            //    return Unauthorized("Password not provided");
+            //}
         //}
 
         var resultDb = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
@@ -137,7 +138,7 @@ public class AccountController : ControllerBase
         {
             Username = user.UserName,
             Email = user.Email,
-            Token = _tokenService.CreateToken(user)
+            Token = await _tokenService.CreateToken(user)
         };
         _logger.LogInformation("User logged in: {Username}, {Email}", user.UserName, user.Email);
         //await _cache.SetAsync(cacheKey, user, new DistributedCacheEntryOptions
@@ -146,4 +147,22 @@ public class AccountController : ControllerBase
         //}, ct);
         return Ok(responseDb);
     }
+
+    
+    [HttpGet("me")]
+    public IActionResult GetCurrentUser()
+    {
+        var user = User.Identity as ClaimsIdentity;
+        var roles = user?.Claims
+            .Where(c => c.Type == ClaimTypes.Role)
+            .Select(c => c.Value)
+            .ToList();
+
+        return Ok(new
+        {
+            UserName = user?.Name,
+            Roles = roles
+        });
+    }
+    
 }

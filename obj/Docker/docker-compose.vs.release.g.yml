@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   backend:
-    container_name: "RRS.Api"
+    container_name: "RRS.Api_1"
     build:
       args:
         BUILD_CONFIGURATION: Release

@@ -42,6 +42,14 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
+builder.Services.AddCors(options =>
+    options.AddPolicy("CorsPolicy",
+    builder =>
+    {
+        builder.WithOrigins("http://localhost:3000");
+    })
+);
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -96,12 +104,13 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-app.UseCors(x =>
-{
-    x.WithHeaders().AllowAnyHeader();
-    x.WithMethods().AllowAnyMethod();
-    x.WithOrigins("http://localhost:3000");
-});
+//app.UseCors(x =>
+//{
+//    x.WithHeaders().AllowAnyHeader();
+//    x.WithMethods().AllowAnyMethod();
+//    x.WithOrigins("http://localhost:3000");
+//});
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

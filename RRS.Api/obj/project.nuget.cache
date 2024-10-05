@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "dsOIcOtDRZDy8VCjdyP0BTJsMmrD1RoYxd1SbdzZX0ziKHMsPRZrve0ROO8lnGvuYAis3UqSLFlGXuVZ7Nc8wg==",
+  "dgSpecHash": "qFsVSi4y8wzQRq0YgMe4nJZE+BTQT1Z0zHn+ZFszTWlLJcBf8XpLzgbgnPRYmX+Xs/4Pybh6wH8C8AU3bVX6Kg==",
   "success": true,
   "projectFilePath": "D:\\_Programming\\RestaurantReservationSite\\RRS.Api\\RRS.Api.csproj",
   "expectedPackageFiles": [
@@ -43,8 +43,8 @@
     "C:\\Users\\desie\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.5\\microsoft.visualstudio.azure.containers.tools.targets.1.19.5.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
-    "C:\\Users\\desie\\.nuget\\packages\\npgsql\\8.0.3\\npgsql.8.0.3.nupkg.sha512",
-    "C:\\Users\\desie\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.4\\npgsql.entityframeworkcore.postgresql.8.0.4.nupkg.sha512",
+    "C:\\Users\\desie\\.nuget\\packages\\npgsql\\8.0.4\\npgsql.8.0.4.nupkg.sha512",
+    "C:\\Users\\desie\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.8\\npgsql.entityframeworkcore.postgresql.8.0.8.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",

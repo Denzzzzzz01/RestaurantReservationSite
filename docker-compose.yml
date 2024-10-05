@@ -15,8 +15,10 @@ services:
       context: ./rrs-client
       dockerfile: Dockerfile
 
-  # proxy:
-  #   image: nginx:mainline
+  proxy:
+    image: nginx:mainline
+    depends_on:
+      - client
 
   postgres.db:
     image: postgres:latest
