@@ -15,9 +15,6 @@ public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
         builder.Property(r => r.SeatingCapacity)
             .IsRequired();
 
-        builder.HasCheckConstraint("CK_Restaurant_SeatingCapacity", "SeatingCapacity BETWEEN 1 AND 500");
-
-
         builder.HasMany(r => r.Manageres)
             .WithOne(m => m.Restaurant)
             .HasForeignKey(m => m.RestaurantId);

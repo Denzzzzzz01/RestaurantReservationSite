@@ -124,3 +124,7 @@ D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\ru\Microsoft.
 D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\Mapster.dll
+D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\Mapster.Core.dll
+D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\MediatR.dll
+D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\MediatR.Contracts.dll

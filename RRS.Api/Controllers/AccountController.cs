@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using ProjectManagement.Application.Contracts.Account;
 using RRS.Application.Interfaces;
 using RRS.Core.Models;
@@ -99,7 +97,7 @@ public class AccountController : BaseController
 
 
         //var cacheKey = $"User_{loginDto.Email}";  
-        //var existingUser = await _cache.GetAsync<AppUser>(cacheKey);  ////// CHECK THIS !!! //////
+        //var existingUser = await _cache.GetAsync<AppUser>(cacheKey);  
         //if (existingUser != null && existingUser.Email.ToLower() == loginDto.Email.ToLower())
         //{
             //_logger.LogInformation("User {Email} found in cache", loginDto.Email);
@@ -150,19 +148,15 @@ public class AccountController : BaseController
 
     
     [HttpGet("me")]
-    public IActionResult GetCurrentUser()
+    public async Task<IActionResult> GetCurrentUser()
     {
-        var user = User.Identity as ClaimsIdentity;
-        var roles = user?.Claims
-            .Where(c => c.Type == ClaimTypes.Role)
-            .Select(c => c.Value)
-            .ToList();
+
+        var appUser = await GetCurrentUserAsync();
 
         return Ok(new
         {
-            UserName = user?.Name,
-            Roles = roles
-        });
+            IsRestaurantManager = appUser.isRestaurantManager,
+        }) ;
     }
     
 }

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RRS.Api.Extensions;
@@ -8,6 +10,7 @@ using RRS.Application.Interfaces;
 using RRS.Core.Models;
 using RRS.Infrastructure.Persistence;
 using RRS.Infrastructure.Services;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -93,7 +96,12 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+    Assembly.GetExecutingAssembly(),
+    Assembly.Load("RRS.Application") 
+));
 builder.Services.AddScoped<ITokenService, TokenSerive>();
+builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 
 var app = builder.Build();
 
@@ -104,12 +112,6 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-//app.UseCors(x =>
-//{
-//    x.WithHeaders().AllowAnyHeader();
-//    x.WithMethods().AllowAnyMethod();
-//    x.WithOrigins("http://localhost:3000");
-//});
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();

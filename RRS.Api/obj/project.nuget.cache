@@ -1,10 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "qFsVSi4y8wzQRq0YgMe4nJZE+BTQT1Z0zHn+ZFszTWlLJcBf8XpLzgbgnPRYmX+Xs/4Pybh6wH8C8AU3bVX6Kg==",
+  "dgSpecHash": "YQCvyVVcDrFBqGL7VdSNzttQzJeHMrbRUvaYTzyLIsrqJnnjld1RTQ5Uwp1VelTnEdzeFBDrRujcSjsMnrRfmg==",
   "success": true,
   "projectFilePath": "D:\\_Programming\\RestaurantReservationSite\\RRS.Api\\RRS.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\desie\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\desie\\.nuget\\packages\\mapster\\7.4.0\\mapster.7.4.0.nupkg.sha512",
+    "C:\\Users\\desie\\.nuget\\packages\\mapster.core\\1.2.1\\mapster.core.1.2.1.nupkg.sha512",
+    "C:\\Users\\desie\\.nuget\\packages\\mediatr\\12.4.1\\mediatr.12.4.1.nupkg.sha512",
+    "C:\\Users\\desie\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.8\\microsoft.aspnetcore.authentication.jwtbearer.8.0.8.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.8\\microsoft.aspnetcore.cryptography.internal.8.0.8.nupkg.sha512",
     "C:\\Users\\desie\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.8\\microsoft.aspnetcore.cryptography.keyderivation.8.0.8.nupkg.sha512",

@@ -14,7 +14,6 @@ public class Restaurant
     public string Name { get; set; }  
 
     [Required]
-    [StringLength(200)]
     public Address Address { get; set; }
 
     [Required]

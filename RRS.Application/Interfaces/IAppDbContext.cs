@@ -6,6 +6,7 @@ namespace RRS.Application.Interfaces;
 
 public interface IAppDbContext
 {
-
+    DbSet<RestaurantManagerData> RestaurantManagerDatas { get; set; }
+    DbSet<Restaurant> Restaurants { get; set; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

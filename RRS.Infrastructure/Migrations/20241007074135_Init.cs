@@ -33,6 +33,7 @@ namespace RRS.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    isRestaurantManager = table.Column<bool>(type: "boolean", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -51,6 +52,29 @@ namespace RRS.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Restaurants",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Address_Street = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Address_City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Address_Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Address_State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Address_Latitude = table.Column<double>(type: "double precision", nullable: false),
+                    Address_Longitude = table.Column<double>(type: "double precision", nullable: false),
+                    OpeningHour = table.Column<int>(type: "integer", nullable: false),
+                    ClosingHour = table.Column<int>(type: "integer", nullable: false),
+                    SeatingCapacity = table.Column<int>(type: "integer", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    Website = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Restaurants", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,13 +183,38 @@ namespace RRS.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RestaurantManagerDatas",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AppUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RestaurantId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RestaurantManagerDatas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RestaurantManagerDatas_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RestaurantManagerDatas_Restaurants_RestaurantId",
+                        column: x => x.RestaurantId,
+                        principalTable: "Restaurants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("af8a8515-eada-419e-80c3-4f6f96de6d41"), null, "User", "USER" },
-                    { new Guid("e906baa4-d7f1-426f-b27f-3c280796e24e"), null, "Admin", "ADMIN" }
+                    { new Guid("3a6e9906-cfa0-4597-a8ed-1236b435ba0f"), null, "User", "USER" },
+                    { new Guid("b9755a74-f2f0-4ad9-b41c-d9491dcb711c"), null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -204,6 +253,17 @@ namespace RRS.Infrastructure.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RestaurantManagerDatas_AppUserId",
+                table: "RestaurantManagerDatas",
+                column: "AppUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RestaurantManagerDatas_RestaurantId",
+                table: "RestaurantManagerDatas",
+                column: "RestaurantId");
         }
 
         /// <inheritdoc />
@@ -225,10 +285,16 @@ namespace RRS.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "RestaurantManagerDatas");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Restaurants");
         }
     }
 }

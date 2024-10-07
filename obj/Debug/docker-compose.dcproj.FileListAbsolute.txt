@@ -38,3 +38,7 @@ D:\_Programming\RestaurantReservationSite\bin\Debug\System.Text.Json.dll
 D:\_Programming\RestaurantReservationSite\bin\Debug\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\_Programming\RestaurantReservationSite\bin\Debug\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\_Programming\RestaurantReservationSite\bin\Debug\Microsoft.IdentityModel.Protocols.dll
+D:\_Programming\RestaurantReservationSite\bin\Debug\MediatR.dll
+D:\_Programming\RestaurantReservationSite\bin\Debug\MediatR.Contracts.dll
+D:\_Programming\RestaurantReservationSite\bin\Debug\Mapster.dll
+D:\_Programming\RestaurantReservationSite\bin\Debug\Mapster.Core.dll

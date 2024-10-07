@@ -31,12 +31,6 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
                 Id = Guid.NewGuid(),
                 Name= "User",
                 NormalizedName = "USER"
-            },
-            new IdentityRole<Guid>
-            {
-                Id = Guid.NewGuid(),
-                Name= "RestaurantManager",
-                NormalizedName = "RESTAURANTMANAGER"
             }
         };
         builder.Entity<IdentityRole<Guid>>().HasData(roles);

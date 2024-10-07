@@ -12,8 +12,8 @@ using RRS.Infrastructure.Persistence;
 namespace RRS.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241005082632_AddedRestaurantModel")]
-    partial class AddedRestaurantModel
+    [Migration("20241007074135_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,21 +54,15 @@ namespace RRS.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("27ac20cc-c9ac-4816-8b3f-f5be4326efae"),
+                            Id = new Guid("b9755a74-f2f0-4ad9-b41c-d9491dcb711c"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("59cafc34-fb88-4440-82b7-6cb7537ea9e2"),
+                            Id = new Guid("3a6e9906-cfa0-4597-a8ed-1236b435ba0f"),
                             Name = "User",
                             NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = new Guid("7d8e4dc2-6315-4a79-acc6-e6ac8d13fe83"),
-                            Name = "RestaurantManager",
-                            NormalizedName = "RESTAURANTMANAGER"
                         });
                 });
 
@@ -227,6 +221,9 @@ namespace RRS.Infrastructure.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("isRestaurantManager")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
