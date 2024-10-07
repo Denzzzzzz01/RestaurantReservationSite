@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RRS.Api.Extensions;
+using RRS.Application.Common.Mapping;
 using RRS.Application.Interfaces;
 using RRS.Core.Models;
 using RRS.Infrastructure.Persistence;
@@ -100,6 +99,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     Assembly.GetExecutingAssembly(),
     Assembly.Load("RRS.Application") 
 ));
+MappingConfig.Configure();
 builder.Services.AddScoped<ITokenService, TokenSerive>();
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 

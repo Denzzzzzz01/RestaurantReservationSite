@@ -56,9 +56,11 @@ public class RestaurantController : BaseController
     }
 
     [HttpGet("GetAllRestaurants")]
-    public async Task<IActionResult> GetAllRestaurants()
+    public async Task<IActionResult> GetAllRestaurants(int PageNumber = 1, int PageSize = 10)
     {
-        var restaurants = await _mediator.Send(new GetRestaurantsQuery());
+
+        var query = new GetRestaurantsQuery(PageNumber, PageSize);
+        var restaurants = await _mediator.Send(query);
 
         if (restaurants == null || !restaurants.Any())
         {

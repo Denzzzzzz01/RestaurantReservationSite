@@ -18,41 +18,53 @@ public class AddRestaurantCommandHandler : IRequestHandler<AddRestaurantCommand,
 
     public async Task<Guid> Handle(AddRestaurantCommand request, CancellationToken cancellationToken)
     {
-        var isManager = await _dbContext.RestaurantManagerDatas
-            .AnyAsync(m => m.AppUserId == request.User.Id, cancellationToken);
-
-        if (isManager)
+        using (var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken))
         {
-            throw new InvalidOperationException("User is already a manager of another restaurant.");
+            try
+            {
+                var isManager = await _dbContext.RestaurantManagerDatas
+                    .AnyAsync(m => m.AppUserId == request.User.Id, cancellationToken);
+
+                if (isManager)
+                    throw new InvalidOperationException("User is already a manager of another restaurant.");
+                
+
+                var restaurant = new Restaurant
+                {
+                    Id = Guid.NewGuid(),
+                    Name = request.Name,
+                    Address = request.Address,
+                    SeatingCapacity = request.SeatingCapacity,
+                    OpeningHour = request.OpeningHour,
+                    ClosingHour = request.ClosingHour,
+                    PhoneNumber = request.PhoneNumber,
+                    Website = request.Website
+                };
+
+                var restaurantManager = new RestaurantManagerData
+                {
+                    Id = Guid.NewGuid(),
+                    AppUserId = request.User.Id,
+                    Restaurant = restaurant
+                };
+
+                request.User.isRestaurantManager = true;
+                await _userManager.UpdateAsync(request.User);
+
+                restaurant.Manageres.Add(restaurantManager);
+                _dbContext.Restaurants.Add(restaurant);
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+
+                return restaurant.Id;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
-
-        var restaurant = new Restaurant
-        {
-            Id = Guid.NewGuid(),
-            Name = request.Name,
-            Address = request.Address,
-            SeatingCapacity = request.SeatingCapacity,
-            OpeningHour = request.OpeningHour,
-            ClosingHour = request.ClosingHour,
-            PhoneNumber = request.PhoneNumber,
-            Website = request.Website
-        };
-
-        var restaurantManager = new RestaurantManagerData
-        {
-            Id = Guid.NewGuid(),
-            AppUserId = request.User.Id,
-            Restaurant = restaurant
-        };
-
-        request.User.isRestaurantManager = true;
-        await _userManager.UpdateAsync(request.User);
-
-        restaurant.Manageres.Add(restaurantManager);
-        _dbContext.Restaurants.Add(restaurant);
-
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return restaurant.Id;
     }
 }
