@@ -15,5 +15,10 @@ public static class MappingConfig
 
         TypeAdapterConfig<RestaurantManagerData, RestaurantManagerDataDto>.NewConfig()
             .Map(dest => dest.AppUser, src => src.AppUser.Adapt<AppUserDto>());
+
+        //TypeAdapterConfig<AddRestaurantDto, AddRestaurantCommand>.NewConfig()
+        //    .Map(dest => dest.OpeningHour, src => TimeSpan.Parse(src.OpeningHour))
+        //    .Map(dest => dest.ClosingHour, src => TimeSpan.Parse(src.ClosingHour));
+
     }
 }

@@ -1,7 +1,8 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using RRS.Application.Cqrs.Restaurant.Commands.AddRestaurantCommand;
+using RRS.Application.Cqrs.Restaurant.Commands.AddRestaurant;
 using RRS.Application.Interfaces;
 using RRS.Core.Models;
 
@@ -27,20 +28,9 @@ public class AddRestaurantCommandHandler : IRequestHandler<AddRestaurantCommand,
 
                 if (isManager)
                     throw new InvalidOperationException("User is already a manager of another restaurant.");
-                
 
-                var restaurant = new Restaurant
-                {
-                    Id = Guid.NewGuid(),
-                    Name = request.Name,
-                    Address = request.Address,
-                    SeatingCapacity = request.SeatingCapacity,
-                    OpeningHour = request.OpeningHour,
-                    ClosingHour = request.ClosingHour,
-                    PhoneNumber = request.PhoneNumber,
-                    Website = request.Website
-                };
 
+                var restaurant = request.Adapt<Restaurant>();
                 var restaurantManager = new RestaurantManagerData
                 {
                     Id = Guid.NewGuid(),

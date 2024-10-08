@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using RRS.Core.Models;
 
-namespace RRS.Application.Cqrs.Restaurant.Commands.AddRestaurantCommand;
+namespace RRS.Application.Cqrs.Restaurant.Commands.AddRestaurant;
 
 public record AddRestaurantCommand
 (
@@ -9,8 +9,8 @@ public record AddRestaurantCommand
     string Name,
     Address Address,
     int SeatingCapacity,
-    int OpeningHour,
-    int ClosingHour,
+    TimeSpan OpeningHour,
+    TimeSpan ClosingHour,
     string? PhoneNumber,
     string? Website
 ) : IRequest<Guid>;

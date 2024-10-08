@@ -10,8 +10,8 @@ public class RestaurantDto
     public string Name { get; set; }
     public Address Address { get; set; }
     public int SeatingCapacity { get; set; }
-    public int OpeningHour { get; set; }
-    public int ClosingHour { get; set; }
+    public TimeSpan OpeningHour { get; set; }
+    public TimeSpan ClosingHour { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Website { get; set; }
     

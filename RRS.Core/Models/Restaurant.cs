@@ -17,12 +17,10 @@ public class Restaurant
     public Address Address { get; set; }
 
     [Required]
-    [Range(0, 24)]
-    public int OpeningHour { get; set; } = 0;
+    public TimeSpan OpeningHour { get; set; } = TimeSpan.FromHours(0);
 
     [Required]
-    [Range(0, 24)]
-    public int ClosingHour { get; set; } = 24;
+    public TimeSpan ClosingHour { get; set; } = TimeSpan.FromHours(24);
 
     [Required]
     [Range(1, 500, ErrorMessage = "Seating capacity must be between 1 and 500.")]

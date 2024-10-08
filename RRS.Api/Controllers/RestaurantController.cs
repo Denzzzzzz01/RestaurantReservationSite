@@ -1,9 +1,12 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RRS.Application.Contracts.Restaurant;
-using RRS.Application.Cqrs.Restaurant.Commands.AddRestaurantCommand;
+using RRS.Application.Cqrs.Restaurant.Commands.AddRestaurant;
+using RRS.Application.Cqrs.Restaurant.Commands.DeleteRestaurant;
+using RRS.Application.Cqrs.Restaurant.Commands.UpdateRestaurant;
 using RRS.Application.Cqrs.Restaurant.Query.GetRestaurants;
 using RRS.Application.Interfaces;
 using RRS.Core.Models;
@@ -26,7 +29,7 @@ public class RestaurantController : BaseController
     {
         var user = await GetCurrentUserAsync();
 
-        if (user == null)
+        if (user is null)
         {
             return Unauthorized("User is not authenticated.");
         }
@@ -34,18 +37,10 @@ public class RestaurantController : BaseController
         var command = new AddRestaurantCommand(
             user,
             dto.Name,
-            new Address
-            {
-                Street = dto.Address.Street,
-                City = dto.Address.City,
-                Country = dto.Address.Country,
-                State = dto.Address.State,
-                Latitude = dto.Address.Latitude,
-                Longitude = dto.Address.Longitude
-            },
+           dto.Address,
             dto.SeatingCapacity,
-            dto.OpeningHour,
-            dto.ClosingHour,
+            TimeSpan.Parse(dto.OpeningHour),
+            TimeSpan.Parse(dto.ClosingHour),
             dto.PhoneNumber,
             dto.Website
         );
@@ -53,6 +48,52 @@ public class RestaurantController : BaseController
         var restaurantId = await _mediator.Send(command);
 
         return Ok(restaurantId);
+    }
+
+    [Authorize]
+    [HttpPut(nameof(UpdateRestaurant))]
+    public async Task<IActionResult> UpdateRestaurant([FromBody] UpdateRestaurantDto dto)
+    {
+        var user = await GetCurrentUserAsync();
+
+        if (user is null)
+        {
+            return Unauthorized("User is not authenticated.");
+        }
+
+        var command = new UpdateRestaurantCommand(
+            user,
+            dto.Id,
+            dto.Name,
+            dto.Address,
+            dto.SeatingCapacity,
+            TimeSpan.Parse(dto.OpeningHour),
+            TimeSpan.Parse(dto.ClosingHour),
+            dto.PhoneNumber,
+            dto.Website
+        );
+
+        var updatedRestaurantId = await _mediator.Send(command);
+
+        return Ok(updatedRestaurantId);
+    }
+
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete(nameof(DeleteRestaurant))]
+    public async Task<IActionResult> DeleteRestaurant(Guid id)
+    {
+        var user = await GetCurrentUserAsync();
+
+        if (user is null)
+        {
+            return Unauthorized("User is not authenticated.");
+        }
+
+        var command = new DeleteRestaurantCommand(id, user);
+        var deletedRestaurantId = await _mediator.Send(command);
+
+        return Ok(deletedRestaurantId);
     }
 
     [HttpGet("GetAllRestaurants")]

@@ -1,5 +1,4 @@
-﻿using Mapster;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RRS.Application.Contracts.AppUser;
 using RRS.Application.Contracts.Restaurant;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagement.Application.Contracts.Account;
@@ -146,17 +147,23 @@ public class AccountController : BaseController
         return Ok(responseDb);
     }
 
-    
+
+    [Authorize]
     [HttpGet("me")]
     public async Task<IActionResult> GetCurrentUser()
     {
+        var roles = User.Claims
+            .Where(c => c.Type == ClaimTypes.Role)
+            .Select(c => c.Value)
+            .ToList();
 
         var appUser = await GetCurrentUserAsync();
 
         return Ok(new
         {
-            IsRestaurantManager = appUser.isRestaurantManager,
-        }) ;
+            IsMAnager = appUser.isRestaurantManager,
+            Roles = roles
+    });
     }
-    
+
 }

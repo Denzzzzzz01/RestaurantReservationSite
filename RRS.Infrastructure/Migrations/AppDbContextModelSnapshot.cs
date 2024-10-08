@@ -51,13 +51,13 @@ namespace RRS.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b9755a74-f2f0-4ad9-b41c-d9491dcb711c"),
+                            Id = new Guid("90ec6758-a373-4c67-9b6b-32cb1c062261"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("3a6e9906-cfa0-4597-a8ed-1236b435ba0f"),
+                            Id = new Guid("922fa616-e6c7-4d20-9654-bba28cefe3f5"),
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -240,16 +240,16 @@ namespace RRS.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ClosingHour")
-                        .HasColumnType("integer");
+                    b.Property<TimeSpan>("ClosingHour")
+                        .HasColumnType("interval");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int>("OpeningHour")
-                        .HasColumnType("integer");
+                    b.Property<TimeSpan>("OpeningHour")
+                        .HasColumnType("interval");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)

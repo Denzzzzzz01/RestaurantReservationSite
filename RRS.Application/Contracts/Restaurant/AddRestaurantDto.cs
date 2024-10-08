@@ -13,12 +13,10 @@ public class AddRestaurantDto
     public Address Address { get; set; }
 
     [Required]
-    [Range(0, 24)]
-    public int OpeningHour { get; set; } = 0;
+    public string OpeningHour { get; set; }
 
     [Required]
-    [Range(0, 24)]
-    public int ClosingHour { get; set; } = 24;
+    public string ClosingHour { get; set; }
 
     [Required]
     [Range(1, 500, ErrorMessage = "Seating capacity must be between 1 and 500.")]
