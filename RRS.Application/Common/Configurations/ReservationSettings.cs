@@ -1,7 +1,7 @@
 ﻿namespace RRS.Application.Common.Configurations;
 
-public class ReservationSettings
+public static class ReservationSettings
 {
-    public int BookingDurationInHours { get; set; }
-    public int BufferTimeInMinutes { get; set; }
+    public const int BookingDurationInHours = 2;
+    public const int BufferTimeInMinutes = 15;
 }

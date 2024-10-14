@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RRS.Core.Models;
 
+namespace RRS.Infrastructure.Persistence.Configurations;
+
 public class RestaurantManagerDataConfiguration : IEntityTypeConfiguration<RestaurantManagerData>
 {
     public void Configure(EntityTypeBuilder<RestaurantManagerData> builder)

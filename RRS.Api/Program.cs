@@ -97,12 +97,12 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.Configure<ReservationSettings>(builder.Configuration.GetSection("ReservationSettings"));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     Assembly.GetExecutingAssembly(),
     Assembly.Load("RRS.Application") 
 ));
 MappingConfig.Configure();
+builder.Services.AddScoped<DataInitializer>(); 
 builder.Services.AddScoped<ITokenService, TokenSerive>();
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 
@@ -113,6 +113,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.ApplyMigrations();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<AppDbContext>();
+        var dataInitializer = services.GetRequiredService<DataInitializer>();
+
+        dataInitializer.Seed();
+    }
 }
 
 app.UseCors("CorsPolicy");

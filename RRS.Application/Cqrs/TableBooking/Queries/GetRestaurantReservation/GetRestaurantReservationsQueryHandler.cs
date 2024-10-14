@@ -20,7 +20,7 @@ public class GetRestaurantReservationsQueryHandler : IRequestHandler<GetRestaura
     {
         var restaurant = await _dbContext.Restaurants
             .AsNoTracking()
-            .Include(r => r.Reservations)
+            .Include(r => r.Reservations) 
             .FirstOrDefaultAsync(r => r.Id == request.RestaurantId, cancellationToken);
 
         if (restaurant == null)
@@ -28,11 +28,17 @@ public class GetRestaurantReservationsQueryHandler : IRequestHandler<GetRestaura
 
         var reservations = request.Filter switch
         {
-            ReservationFilter.Active => restaurant.Reservations.Where(r => r.Status == ReservationStatus.Active).ToList(),
-            ReservationFilter.All => restaurant.Reservations.ToList(),
+            ReservationFilter.Active => await _dbContext.Reservations
+                .Where(r => r.RestaurantId == restaurant.Id && r.Status == ReservationStatus.Active)
+                .ToListAsync(cancellationToken),
+            ReservationFilter.All => await _dbContext.Reservations
+                .Where(r => r.RestaurantId == restaurant.Id)
+                .ToListAsync(cancellationToken),
             _ => throw new ArgumentOutOfRangeException()
         };
 
         return reservations;
     }
 }
+
+

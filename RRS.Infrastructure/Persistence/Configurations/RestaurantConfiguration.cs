@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using RRS.Core.Models;
 
+namespace RRS.Infrastructure.Persistence.Configurations;
+
 public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
 {
     public void Configure(EntityTypeBuilder<Restaurant> builder)
@@ -20,10 +22,6 @@ public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
             .HasForeignKey(m => m.RestaurantId);
 
         builder.HasMany(r => r.Reservations)
-            .WithOne(reserv => reserv.Restaurant)
-            .HasForeignKey(reserv => reserv.RestaurantId);
-
-        builder.HasMany(r => r.ReservationHistory)
             .WithOne(reserv => reserv.Restaurant)
             .HasForeignKey(reserv => reserv.RestaurantId);
 

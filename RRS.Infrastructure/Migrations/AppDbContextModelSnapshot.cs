@@ -51,13 +51,13 @@ namespace RRS.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("90ec6758-a373-4c67-9b6b-32cb1c062261"),
+                            Id = new Guid("9871198d-747f-4f44-a51f-30528b1a56ce"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("922fa616-e6c7-4d20-9654-bba28cefe3f5"),
+                            Id = new Guid("743c0e74-ec43-4c9d-b901-cf78d1bed4dd"),
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -234,6 +234,45 @@ namespace RRS.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("RRS.Core.Models.Reservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("interval");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ReservationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("interval");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reservations");
+                });
+
             modelBuilder.Entity("RRS.Core.Models.Restaurant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -340,6 +379,25 @@ namespace RRS.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RRS.Core.Models.Reservation", b =>
+                {
+                    b.HasOne("RRS.Core.Models.Restaurant", "Restaurant")
+                        .WithMany("Reservations")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RRS.Core.Models.AppUser", "User")
+                        .WithMany("Reservations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RRS.Core.Models.Restaurant", b =>
                 {
                     b.OwnsOne("RRS.Core.Models.Address", "Address", b1 =>
@@ -405,12 +463,16 @@ namespace RRS.Infrastructure.Migrations
 
             modelBuilder.Entity("RRS.Core.Models.AppUser", b =>
                 {
+                    b.Navigation("Reservations");
+
                     b.Navigation("RestaurantManagerData");
                 });
 
             modelBuilder.Entity("RRS.Core.Models.Restaurant", b =>
                 {
                     b.Navigation("Manageres");
+
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

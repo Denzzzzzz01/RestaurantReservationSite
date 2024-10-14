@@ -21,15 +21,5 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 
         builder.Property(r => r.NumberOfSeats)
             .IsRequired();
-
-        builder.HasOne<Restaurant>()
-            .WithMany(r => r.Reservations)
-            .HasForeignKey(r => r.RestaurantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne<AppUser>()
-            .WithMany(u => u.Reservations)
-            .HasForeignKey(r => r.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }
