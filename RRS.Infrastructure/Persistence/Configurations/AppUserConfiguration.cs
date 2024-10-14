@@ -8,5 +8,12 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
     {
         builder.HasKey(u => u.Id);
 
+        builder.HasMany(u => u.Reservations)
+            .WithOne(reserv => reserv.User)
+            .HasForeignKey(reserv => reserv.UserId);
+
+        builder.HasMany(u => u.ReservationsHistory)
+            .WithOne(reserv => reserv.User)
+            .HasForeignKey(reserv => reserv.UserId);
     }
 }

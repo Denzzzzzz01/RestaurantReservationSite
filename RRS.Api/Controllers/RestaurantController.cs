@@ -7,7 +7,7 @@ using RRS.Application.Contracts.Restaurant;
 using RRS.Application.Cqrs.Restaurant.Commands.AddRestaurant;
 using RRS.Application.Cqrs.Restaurant.Commands.DeleteRestaurant;
 using RRS.Application.Cqrs.Restaurant.Commands.UpdateRestaurant;
-using RRS.Application.Cqrs.Restaurant.Query.GetRestaurants;
+using RRS.Application.Cqrs.Restaurant.Queries.GetRestaurants;
 using RRS.Application.Interfaces;
 using RRS.Core.Models;
 

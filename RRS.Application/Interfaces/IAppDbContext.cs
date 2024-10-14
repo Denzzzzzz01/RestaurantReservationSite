@@ -8,6 +8,7 @@ public interface IAppDbContext
 {
     DbSet<RestaurantManagerData> RestaurantManagerDatas { get; set; }
     DbSet<Restaurant> Restaurants { get; set; }
+    DbSet<Reservation> Reservations { get; set; }
 
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

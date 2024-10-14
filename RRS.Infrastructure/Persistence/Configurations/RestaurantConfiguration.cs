@@ -19,6 +19,13 @@ public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
             .WithOne(m => m.Restaurant)
             .HasForeignKey(m => m.RestaurantId);
 
+        builder.HasMany(r => r.Reservations)
+            .WithOne(reserv => reserv.Restaurant)
+            .HasForeignKey(reserv => reserv.RestaurantId);
+
+        builder.HasMany(r => r.ReservationHistory)
+            .WithOne(reserv => reserv.Restaurant)
+            .HasForeignKey(reserv => reserv.RestaurantId);
 
         builder.OwnsOne(r => r.Address, a =>
         {

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RRS.Api.Extensions;
+using RRS.Application.Common.Configurations;
 using RRS.Application.Common.Mapping;
 using RRS.Application.Interfaces;
 using RRS.Core.Models;
@@ -95,6 +97,7 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+builder.Services.Configure<ReservationSettings>(builder.Configuration.GetSection("ReservationSettings"));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     Assembly.GetExecutingAssembly(),
     Assembly.Load("RRS.Application") 

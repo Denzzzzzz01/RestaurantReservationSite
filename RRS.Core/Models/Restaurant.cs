@@ -8,6 +8,9 @@ public class Restaurant
 
     [Required]
     public List<RestaurantManagerData> Manageres { get; set; } = new List<RestaurantManagerData>();
+    public List<Reservation> Reservations { get; set; } = new List<Reservation>();
+    public List<Reservation> ReservationHistory { get; set; } = new List<Reservation>();
+
 
     [Required]
     [StringLength(100)]
