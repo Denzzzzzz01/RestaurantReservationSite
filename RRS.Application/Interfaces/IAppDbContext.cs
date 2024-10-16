@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using RRS.Core.Models;
 
@@ -12,4 +13,5 @@ public interface IAppDbContext
 
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+    EntityEntry Entry(object entity);
 }

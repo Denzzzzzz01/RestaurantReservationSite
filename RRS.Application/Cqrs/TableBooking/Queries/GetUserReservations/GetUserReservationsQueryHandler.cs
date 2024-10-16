@@ -21,18 +21,13 @@ public class GetUserReservationsQueryHandler : IRequestHandler<GetUserReservatio
 
     public async Task<List<Reservation>> Handle(GetUserReservationsQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-
-        if (user == null)
-            throw new ReservationException("User not found");
-
         var reservations = request.Filter switch
         {
             ReservationFilter.Active => await _dbContext.Reservations
-                .Where(r => r.UserId == user.Id && r.Status == ReservationStatus.Active)
+                .Where(r => r.UserId == request.User.Id && r.Status == ReservationStatus.Active)
                 .ToListAsync(cancellationToken),
             ReservationFilter.All => await _dbContext.Reservations
-                .Where(r => r.UserId == user.Id)
+                .Where(r => r.UserId == request.User.Id)
                 .ToListAsync(cancellationToken),
             _ => throw new ArgumentOutOfRangeException()
         };

@@ -13,26 +13,29 @@ public class DataInitializer
 
     public void Seed()
     {
-        if (!_context.Roles.Any())
+        if (_context.Roles.Any())
         {
-            var roles = new List<IdentityRole<Guid>>
-            {
-                new IdentityRole<Guid>
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                },
-                new IdentityRole<Guid>
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "User",
-                    NormalizedName = "USER"
-                }
-            };
-
-            _context.Roles.AddRange(roles);
+            _context.Roles.RemoveRange(_context.Roles);
             _context.SaveChanges();
         }
+
+        var roles = new List<IdentityRole<Guid>>
+        {
+            new IdentityRole<Guid>
+            {
+                Id = Guid.NewGuid(),
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            },
+            new IdentityRole<Guid>
+            {
+                Id = Guid.NewGuid(),
+                Name = "User",
+                NormalizedName = "USER"
+            }
+        };
+
+        _context.Roles.AddRange(roles);
+        _context.SaveChanges();
     }
 }

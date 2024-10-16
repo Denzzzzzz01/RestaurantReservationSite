@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RRS.Api.Extensions;
-using RRS.Application.Common.Configurations;
 using RRS.Application.Common.Mapping;
 using RRS.Application.Interfaces;
+using RRS.Application.Services;
 using RRS.Core.Models;
 using RRS.Infrastructure.Persistence;
 using RRS.Infrastructure.Services;
@@ -105,6 +104,7 @@ MappingConfig.Configure();
 builder.Services.AddScoped<DataInitializer>(); 
 builder.Services.AddScoped<ITokenService, TokenSerive>();
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
+builder.Services.AddScoped<IReservationAvailabilityService, ReservationAvailabilityService>();
 
 var app = builder.Build();
 
@@ -114,14 +114,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.ApplyMigrations();
 
-    using (var scope = app.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<AppDbContext>();
-        var dataInitializer = services.GetRequiredService<DataInitializer>();
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var services = scope.ServiceProvider;
+    //    var context = services.GetRequiredService<AppDbContext>();
+    //    var dataInitializer = services.GetRequiredService<DataInitializer>();
 
-        dataInitializer.Seed();
-    }
+    //    dataInitializer.Seed();
+    //}
 }
 
 app.UseCors("CorsPolicy");

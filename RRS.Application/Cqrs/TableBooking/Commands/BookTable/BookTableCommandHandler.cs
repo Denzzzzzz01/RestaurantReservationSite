@@ -13,65 +13,72 @@ public class BookTableCommandHandler : IRequestHandler<BookTableCommand, Guid>
 {
     private readonly IAppDbContext _dbContext;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IReservationAvailabilityService _reservationAvailabilityService;
 
-    public BookTableCommandHandler(IAppDbContext dbContext, UserManager<AppUser> userManager)
+    public BookTableCommandHandler(IAppDbContext dbContext, UserManager<AppUser> userManager, IReservationAvailabilityService reservationAvailabilityService)
     {
         _dbContext = dbContext;
         _userManager = userManager;
+        _reservationAvailabilityService = reservationAvailabilityService;
     }
 
     public async Task<Guid> Handle(BookTableCommand request, CancellationToken cancellationToken)
     {
-        var restaurant = await _dbContext.Restaurants
-            .Include(r => r.Reservations)
-            .FirstOrDefaultAsync(r => r.Id == request.RestaurantId, cancellationToken);
-        if (restaurant is null)
-            throw new ReservationException("Restaurant not found");
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-        var user = await _userManager.FindByIdAsync(request.UserId.ToString());
-        if (user is null)
-            throw new ReservationException("User not found");
-
-        TimeSpan reservationDuration = TimeSpan.FromHours(ReservationSettings.BookingDurationInHours)
-            .Add(TimeSpan.FromMinutes(ReservationSettings.BufferTimeInMinutes));
-        var endTime = request.StartTime.Add(reservationDuration);
-
-        if (request.StartTime < restaurant.OpeningHour ||
-            request.StartTime > restaurant.ClosingHour.Subtract(reservationDuration))
+        try
         {
-            throw new ReservationException("Reservation time must be within restaurant opening hours.");
+            if (!await _reservationAvailabilityService.IsReservationTimeValidAsync(request.RestaurantId, request.StartTime, cancellationToken))
+                throw new ReservationException("Reservation time must be within restaurant opening hours.");
+
+            TimeSpan reservationDuration = TimeSpan.FromHours(ReservationSettings.BookingDurationInHours)
+                .Add(TimeSpan.FromMinutes(ReservationSettings.BufferTimeInMinutes));
+            var endTime = request.StartTime.Add(reservationDuration);
+
+            var (hasAvailableSeats, restaurant) = await _reservationAvailabilityService.HasAvailableSeatsAsync(
+                request.RestaurantId,
+                request.ReservationDate,
+                request.StartTime,
+                endTime,
+                request.NumberOfSeats,
+                cancellationToken
+            );
+
+            if (!hasAvailableSeats)
+                throw new ReservationException("Not enough available seats for the requested time.");
+
+            _dbContext.Entry(restaurant).State = EntityState.Unchanged;
+            _dbContext.Entry(request.User).State = EntityState.Unchanged;
+            var reservation = new Reservation
+            {
+                Id = Guid.NewGuid(),
+                RestaurantId = request.RestaurantId,
+                Restaurant = restaurant,
+                UserId = request.User.Id,
+                User = request.User, 
+                ReservationDate = request.ReservationDate,
+                StartTime = request.StartTime,
+                EndTime = endTime,
+                NumberOfSeats = request.NumberOfSeats,
+                Status = ReservationStatus.Active,
+            };
+
+            _dbContext.Reservations.Add(reservation);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+            return reservation.Id;
         }
-
-        var overlappingReservations = restaurant.Reservations
-            .Where(r => r.ReservationDate.Date == request.ReservationDate.Date &&
-                r.StartTime < endTime &&
-                r.EndTime > request.StartTime)
-            .Sum(r => r.NumberOfSeats);
-
-        if (overlappingReservations + request.NumberOfSeats > restaurant.SeatingCapacity)
+        catch (Exception)
         {
-            throw new ReservationException("Not enough available seats for the requested time.");
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
         }
-
-        var reservation = new Reservation
-        {
-            Id = Guid.NewGuid(),
-            RestaurantId = request.RestaurantId,
-            Restaurant = restaurant,
-            UserId = request.UserId,
-            User = user,
-            ReservationDate = request.ReservationDate,
-            StartTime = request.StartTime,
-            EndTime = endTime,
-            NumberOfSeats = request.NumberOfSeats,
-            Status = ReservationStatus.Active,
-        };
-
-        _dbContext.Reservations.Add(reservation);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return reservation.Id;
     }
 }
+
+
+
+
 
 

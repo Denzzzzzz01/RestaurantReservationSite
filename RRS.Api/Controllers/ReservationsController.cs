@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RRS.Application.Contracts.Reservations;
 using RRS.Application.Cqrs.TableBooking.Commands.BookTable;
+using RRS.Application.Cqrs.TableBooking.Commands.ChangeReservationStatus;
 using RRS.Application.Cqrs.TableBooking.Queries.GetRestaurantReservation;
 using RRS.Application.Cqrs.TableBooking.Queries.GetUserReservations;
 using RRS.Core.Enums;
@@ -33,7 +34,7 @@ public class ReservationsController : BaseController
     public async Task<IActionResult> GetUserReservations([FromQuery] ReservationFilter filter = ReservationFilter.All)
     {
         var user = await GetCurrentUserAsync();
-        var reservations = await _mediator.Send(new GetUserReservationsQuery(user.Id, filter));
+        var reservations = await _mediator.Send(new GetUserReservationsQuery(user, filter));
         return Ok(reservations);
     }
 
@@ -46,9 +47,21 @@ public class ReservationsController : BaseController
 
         var user = await GetCurrentUserAsync();
         var command = dto.Adapt<BookTableCommand>();
-        command = command with { UserId = user.Id };
+        command = command with { User = user };
 
         var reservationId = await _mediator.Send(command);
         return Ok(reservationId);
     }
+
+    [HttpPost("change-status")]
+    public async Task<IActionResult> ChangeReservationStatus(Guid reservationId, ReservationStatus newStatus)
+    {
+        var user = await GetCurrentUserAsync();
+
+        var command = new ChangeReservationStatusCommand(reservationId, newStatus, user.Id);
+        reservationId = await _mediator.Send(command);
+
+        return Ok(reservationId);
+    }
+
 }
