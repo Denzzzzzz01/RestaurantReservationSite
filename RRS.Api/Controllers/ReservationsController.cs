@@ -38,7 +38,7 @@ public class ReservationsController : BaseController
         return Ok(reservations);
     }
 
-    [HttpPost(nameof(BookTable))]
+    [HttpPost("book-table")]
     public async Task<IActionResult> BookTable([FromBody] BookTableDto dto)
     {
         if (!ModelState.IsValid)

@@ -1,13 +1,14 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RRS.Application.Common.Exceptions;
+using RRS.Application.Contracts.Reservations;
 using RRS.Application.Interfaces;
 using RRS.Core.Enums;
-using RRS.Core.Models;
 
 namespace RRS.Application.Cqrs.TableBooking.Queries.GetRestaurantReservation;
 
-public class GetRestaurantReservationsQueryHandler : IRequestHandler<GetRestaurantReservationsQuery, List<Reservation>>
+public class GetRestaurantReservationsQueryHandler : IRequestHandler<GetRestaurantReservationsQuery, List<RestaurantReservationDto>>
 {
     private readonly IAppDbContext _dbContext;
 
@@ -16,11 +17,12 @@ public class GetRestaurantReservationsQueryHandler : IRequestHandler<GetRestaura
         _dbContext = dbContext;
     }
 
-    public async Task<List<Reservation>> Handle(GetRestaurantReservationsQuery request, CancellationToken cancellationToken)
+    public async Task<List<RestaurantReservationDto>> Handle(GetRestaurantReservationsQuery request, CancellationToken cancellationToken)
     {
         var restaurant = await _dbContext.Restaurants
             .AsNoTracking()
-            .Include(r => r.Reservations) 
+            .Include(r => r.Reservations)
+                .ThenInclude(r => r.User) 
             .FirstOrDefaultAsync(r => r.Id == request.RestaurantId, cancellationToken);
 
         if (restaurant == null)
@@ -28,16 +30,16 @@ public class GetRestaurantReservationsQueryHandler : IRequestHandler<GetRestaura
 
         var reservations = request.Filter switch
         {
-            ReservationFilter.Active => await _dbContext.Reservations
-                .Where(r => r.RestaurantId == restaurant.Id && r.Status == ReservationStatus.Active)
-                .ToListAsync(cancellationToken),
-            ReservationFilter.All => await _dbContext.Reservations
-                .Where(r => r.RestaurantId == restaurant.Id)
-                .ToListAsync(cancellationToken),
+            ReservationFilter.Active => restaurant.Reservations.Where(r => r.Status == ReservationStatus.Active).ToList(),
+            ReservationFilter.All => restaurant.Reservations.ToList(),
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        return reservations;
+        var reservationDtos = reservations.Select(r => 
+            r.Adapt<RestaurantReservationDto>()
+        ).ToList();
+
+        return reservationDtos;
     }
 }
 

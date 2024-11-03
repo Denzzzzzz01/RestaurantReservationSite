@@ -8,18 +8,16 @@ using RRS.Application.Cqrs.Restaurant.Commands.DeleteRestaurant;
 using RRS.Application.Cqrs.Restaurant.Commands.UpdateRestaurant;
 using RRS.Application.Cqrs.Restaurant.Queries.GetRestaurantDetailsQuery;
 using RRS.Application.Cqrs.Restaurant.Queries.GetRestaurants;
-using RRS.Application.Interfaces;
+using RRS.Application.Cqrs.Restaurant.Queries.SearchRestaurants;
 using RRS.Core.Models;
 
 namespace RRS.Api.Controllers;
 
 public class RestaurantsController : BaseController
 {
-    private readonly IAppDbContext _dbContext;
     private readonly IMediator _mediator;
-    public RestaurantsController(UserManager<AppUser> userManager, IAppDbContext dbContext, IMediator mediator) : base(userManager)
+    public RestaurantsController(UserManager<AppUser> userManager, IMediator mediator) : base(userManager)
     {
-        _dbContext = dbContext;
         _mediator = mediator;
     }
 
@@ -45,9 +43,9 @@ public class RestaurantsController : BaseController
             dto.Website
         );
 
-        var restaurantId = await _mediator.Send(command);
+        var addedRestaurantId = await _mediator.Send(command);
 
-        return Ok(restaurantId);
+        return Ok(addedRestaurantId);
     }
 
     [Authorize]
@@ -126,6 +124,19 @@ public class RestaurantsController : BaseController
         }
 
         return Ok(restaurant);
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchRestaurants([FromQuery] SearchRestaurantsDto searchDto)
+    {
+        var query = new SearchRestaurantsQuery(searchDto);
+        var restaurants = await _mediator.Send(query);
+
+        if (restaurants is null || !restaurants.Any())
+            return NotFound("No restaurants found.");
+        
+
+        return Ok(restaurants);
     }
 }
 

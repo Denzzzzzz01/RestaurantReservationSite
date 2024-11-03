@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using RRS.Application.Contracts.AppUser;
+using RRS.Application.Contracts.Reservations;
 using RRS.Application.Contracts.Restaurant;
 using RRS.Application.Contracts.RestaurantManagerData;
 using RRS.Core.Models;
@@ -16,9 +17,14 @@ public static class MappingConfig
         TypeAdapterConfig<RestaurantManagerData, RestaurantManagerDataDto>.NewConfig()
             .Map(dest => dest.AppUser, src => src.AppUser.Adapt<AppUserDto>());
 
-        //TypeAdapterConfig<AddRestaurantDto, AddRestaurantCommand>.NewConfig()
-        //    .Map(dest => dest.OpeningHour, src => TimeSpan.Parse(src.OpeningHour))
-        //    .Map(dest => dest.ClosingHour, src => TimeSpan.Parse(src.ClosingHour));
+        TypeAdapterConfig<Reservation, UserReservationDto>.NewConfig()
+            .Map(dest => dest.RestaurantName, src => src.Restaurant.Name)
+            .Map(dest => dest.RestaurantId, src => src.RestaurantId);
+
+        TypeAdapterConfig<Reservation, RestaurantReservationDto>.NewConfig()
+            .Map(dest => dest.UserName, src => src.User.UserName)    
+            .Map(dest => dest.UserContact, src => src.User.Email)
+            .Map(dest => dest.UserId, src => src.UserId);
 
     }
 }
