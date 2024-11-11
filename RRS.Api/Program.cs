@@ -101,11 +101,11 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     Assembly.Load("RRS.Application") 
 ));
 MappingConfig.Configure();
-builder.Services.AddScoped<DataInitializer>(); 
 builder.Services.AddScoped<ITokenService, TokenSerive>();
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 builder.Services.AddScoped<IReservationAvailabilityService, ReservationAvailabilityService>();
 
+builder.Services.AddScoped<DataInitializer>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -114,14 +114,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.ApplyMigrations();
 
-    //using (var scope = app.Services.CreateScope())
-    //{
-    //    var services = scope.ServiceProvider;
-    //    var context = services.GetRequiredService<AppDbContext>();
-    //    var dataInitializer = services.GetRequiredService<DataInitializer>();
-
-    //    dataInitializer.Seed();
-    //}
+    using (var scope = app.Services.CreateScope()) 
+    {
+        var dataInitializer = scope.ServiceProvider.GetRequiredService<DataInitializer>(); 
+        await dataInitializer.SeedRolesAndUsersAsync(); 
+    }
 }
 
 app.UseCors("CorsPolicy");

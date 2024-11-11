@@ -51,13 +51,13 @@ namespace RRS.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9871198d-747f-4f44-a51f-30528b1a56ce"),
+                            Id = new Guid("2da6335d-c40d-4a34-9573-4c8f056f6bb8"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("743c0e74-ec43-4c9d-b901-cf78d1bed4dd"),
+                            Id = new Guid("ea5059a5-dd06-4feb-a355-ba2018acbd24"),
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -261,12 +261,17 @@ namespace RRS.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("TableId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RestaurantId");
+
+                    b.HasIndex("TableId");
 
                     b.HasIndex("UserId");
 
@@ -293,9 +298,6 @@ namespace RRS.Infrastructure.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<int>("SeatingCapacity")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Website")
                         .HasMaxLength(100)
@@ -326,6 +328,35 @@ namespace RRS.Infrastructure.Migrations
                     b.HasIndex("RestaurantId");
 
                     b.ToTable("RestaurantManagerDatas");
+                });
+
+            modelBuilder.Entity("RRS.Core.Models.RestaurantTable", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("RestaurantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TableNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.ToTable("RestaurantTables");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -387,6 +418,12 @@ namespace RRS.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RRS.Core.Models.RestaurantTable", "Table")
+                        .WithMany("Reservations")
+                        .HasForeignKey("TableId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("RRS.Core.Models.AppUser", "User")
                         .WithMany("Reservations")
                         .HasForeignKey("UserId")
@@ -394,6 +431,8 @@ namespace RRS.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Restaurant");
+
+                    b.Navigation("Table");
 
                     b.Navigation("User");
                 });
@@ -461,6 +500,17 @@ namespace RRS.Infrastructure.Migrations
                     b.Navigation("Restaurant");
                 });
 
+            modelBuilder.Entity("RRS.Core.Models.RestaurantTable", b =>
+                {
+                    b.HasOne("RRS.Core.Models.Restaurant", "Restaurant")
+                        .WithMany("Tables")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("RRS.Core.Models.AppUser", b =>
                 {
                     b.Navigation("Reservations");
@@ -472,6 +522,13 @@ namespace RRS.Infrastructure.Migrations
                 {
                     b.Navigation("Manageres");
 
+                    b.Navigation("Reservations");
+
+                    b.Navigation("Tables");
+                });
+
+            modelBuilder.Entity("RRS.Core.Models.RestaurantTable", b =>
+                {
                     b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618

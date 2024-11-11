@@ -14,9 +14,6 @@ public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.Property(r => r.SeatingCapacity)
-            .IsRequired();
-
         builder.HasMany(r => r.Manageres)
             .WithOne(m => m.Restaurant)
             .HasForeignKey(m => m.RestaurantId);

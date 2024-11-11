@@ -21,4 +21,6 @@ public class RestaurantTable
     public string Description { get; set; } 
 
     public bool IsAvailable { get; set; } = true;  
+
+    public List<Reservation> Reservations { get; set; } = new List<Reservation>();
 }
