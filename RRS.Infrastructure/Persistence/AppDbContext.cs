@@ -41,4 +41,5 @@ public class AppDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     public DbSet<RestaurantManagerData> RestaurantManagerDatas { get; set; }
     public DbSet<Restaurant> Restaurants { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<RestaurantTable> RestaurantTables { get; set; }
 }

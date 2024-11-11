@@ -22,6 +22,9 @@ public class Reservation
     [Range(1, 20)]
     public int NumberOfSeats { get; set; }
 
+    public Guid TableId { get; set; }
+    public RestaurantTable Table { get; set; }
+
     [Required]
     public TimeSpan StartTime { get; set; }
 

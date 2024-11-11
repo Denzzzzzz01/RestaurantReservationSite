@@ -8,7 +8,6 @@ public record AddRestaurantCommand
     AppUser User,
     string Name,
     Address Address,
-    int SeatingCapacity,
     TimeSpan OpeningHour,
     TimeSpan ClosingHour,
     string? PhoneNumber,

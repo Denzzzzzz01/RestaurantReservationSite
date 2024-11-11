@@ -28,21 +28,30 @@ public class ReservationAvailabilityService : IReservationAvailabilityService
         return startTime >= restaurant.OpeningHour && endTime <= restaurant.ClosingHour;
     }
 
-    public async Task<(bool, Restaurant)> HasAvailableSeatsAsync(Guid restaurantId, DateTime reservationDate, TimeSpan startTime, TimeSpan endTime, int requestedSeats, CancellationToken cancellationToken)
+    public async Task<RestaurantTable> GetAvailableTableAsync(Guid restaurantId, DateTime reservationDate, TimeSpan startTime, TimeSpan endTime, int requestedSeats, CancellationToken cancellationToken)
     {
-        var restaurant = await _dbContext.Restaurants
-            .Include(r => r.Reservations)
-            .FirstOrDefaultAsync(r => r.Id == restaurantId, cancellationToken)
-            ?? throw new ReservationException("Restaurant not found");
+        var availableTables = await _dbContext.RestaurantTables
+            .Where(t => t.RestaurantId == restaurantId && t.Capacity >= requestedSeats && t.IsAvailable)
+            .OrderBy(t => t.Capacity)  
+            .ToListAsync(cancellationToken);
 
-        var overlappingReservations = await _dbContext.Reservations
-            .Where(r => r.RestaurantId == restaurant.Id &&
-                        r.ReservationDate.Date == reservationDate.Date &&
-                        r.StartTime < endTime &&
-                        r.EndTime > startTime)
-            .SumAsync(r => r.NumberOfSeats, cancellationToken);
+        foreach (var table in availableTables)
+        {
+            var overlappingReservations = await _dbContext.Reservations
+                .Where(r => r.RestaurantId == restaurantId &&
+                            r.TableId == table.Id &&
+                            r.ReservationDate.Date == reservationDate.Date &&
+                            r.StartTime < endTime &&
+                            r.EndTime > startTime)
+                .ToListAsync(cancellationToken);
 
-        bool hasSeats = overlappingReservations + requestedSeats <= restaurant.SeatingCapacity;
-        return (hasSeats, restaurant);
+            if (!overlappingReservations.Any())
+            {
+                return table;
+            }
+        }
+
+        throw new ReservationException("No available tables found for the requested number of seats.");
     }
 }
+

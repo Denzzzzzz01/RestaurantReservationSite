@@ -35,7 +35,7 @@ public class BookTableCommandHandler : IRequestHandler<BookTableCommand, Guid>
                 .Add(TimeSpan.FromMinutes(ReservationSettings.BufferTimeInMinutes));
             var endTime = request.StartTime.Add(reservationDuration);
 
-            var (hasAvailableSeats, restaurant) = await _reservationAvailabilityService.HasAvailableSeatsAsync(
+            var table = await _reservationAvailabilityService.GetAvailableTableAsync(
                 request.RestaurantId,
                 request.ReservationDate,
                 request.StartTime,
@@ -44,23 +44,23 @@ public class BookTableCommandHandler : IRequestHandler<BookTableCommand, Guid>
                 cancellationToken
             );
 
-            if (!hasAvailableSeats)
-                throw new ReservationException("Not enough available seats for the requested time.");
+            if (table is null)
+                throw new ReservationException("No available tables for the requested number of seats.");
 
-            _dbContext.Entry(restaurant).State = EntityState.Unchanged;
             _dbContext.Entry(request.User).State = EntityState.Unchanged;
+                
             var reservation = new Reservation
             {
                 Id = Guid.NewGuid(),
                 RestaurantId = request.RestaurantId,
-                Restaurant = restaurant,
+                TableId = table.Id,  
                 UserId = request.User.Id,
-                User = request.User, 
+                User = request.User,
                 ReservationDate = request.ReservationDate,
                 StartTime = request.StartTime,
                 EndTime = endTime,
                 NumberOfSeats = request.NumberOfSeats,
-                Status = ReservationStatus.Active,
+                Status = ReservationStatus.Active
             };
 
             _dbContext.Reservations.Add(reservation);
@@ -76,9 +76,3 @@ public class BookTableCommandHandler : IRequestHandler<BookTableCommand, Guid>
         }
     }
 }
-
-
-
-
-
-

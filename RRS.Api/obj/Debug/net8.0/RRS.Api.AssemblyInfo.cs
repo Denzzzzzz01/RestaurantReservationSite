@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RRS.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+960a96c4b9bfa8c7ee98ac466cdc250e3ef33a17")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8075038e8c34c50918cb41aed701e3e27972c6ad")]
 [assembly: System.Reflection.AssemblyProductAttribute("RRS.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RRS.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

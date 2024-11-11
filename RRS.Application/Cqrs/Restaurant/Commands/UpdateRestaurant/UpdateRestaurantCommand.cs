@@ -8,7 +8,6 @@ public record UpdateRestaurantCommand(
     Guid Id,
     string Name,
     Address Address,
-    int SeatingCapacity,
     TimeSpan OpeningHour,
     TimeSpan ClosingHour,
     string? PhoneNumber,

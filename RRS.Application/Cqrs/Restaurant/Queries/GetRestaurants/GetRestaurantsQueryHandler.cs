@@ -26,7 +26,6 @@ public class GetRestaurantsQueryHandler : IRequestHandler<GetRestaurantsQuery, L
                 Id = r.Id,
                 Name = r.Name,
                 Address = r.Address,
-                SeatingCapacity = r.SeatingCapacity,
                 OpeningHour = r.OpeningHour,
                 ClosingHour = r.ClosingHour
             })

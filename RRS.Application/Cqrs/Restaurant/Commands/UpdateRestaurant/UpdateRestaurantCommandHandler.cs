@@ -27,7 +27,6 @@ public class UpdateRestaurantCommandHandler : IRequestHandler<UpdateRestaurantCo
             .Where(r => r.Id == request.Id)
             .ExecuteUpdateAsync(setter => setter
                 .SetProperty(r => r.Name, request.Name)
-                .SetProperty(r => r.SeatingCapacity, request.SeatingCapacity)
                 .SetProperty(r => r.OpeningHour, request.OpeningHour)
                 .SetProperty(r => r.ClosingHour, request.ClosingHour)
                 .SetProperty(r => r.PhoneNumber, request.PhoneNumber)

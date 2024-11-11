@@ -25,6 +25,11 @@ public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
             .WithOne(reserv => reserv.Restaurant)
             .HasForeignKey(reserv => reserv.RestaurantId);
 
+        builder.HasMany(r => r.Tables)
+           .WithOne(t => t.Restaurant)
+           .HasForeignKey(t => t.RestaurantId)
+           .OnDelete(DeleteBehavior.Cascade);
+
         builder.OwnsOne(r => r.Address, a =>
         {
             a.Property(ad => ad.Street).IsRequired().HasMaxLength(200);
