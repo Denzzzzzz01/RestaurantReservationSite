@@ -5,8 +5,6 @@ namespace RRS.Application.Contracts.Restaurant;
 
 public class UpdateRestaurantDto
 {
-    [Required]
-    public Guid Id { get; set; }
 
     [Required]
     [StringLength(100)]

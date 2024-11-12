@@ -8,7 +8,6 @@ public class RestaurantTable
     public Guid Id { get; set; }
     [Required]
     public Guid RestaurantId { get; set; }
-    [Required]
     public Restaurant Restaurant { get; set; }
 
     [Required]

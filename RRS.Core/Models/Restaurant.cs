@@ -9,7 +9,7 @@ public class Restaurant
     [Required]
     public List<RestaurantManagerData> Manageres { get; set; } = new List<RestaurantManagerData>();
     public List<Reservation> Reservations { get; set; } = new List<Reservation>();
-
+    public List<RestaurantTable> Tables { get; set; } = new List<RestaurantTable>();
 
     [Required]
     [StringLength(100)]
@@ -23,12 +23,6 @@ public class Restaurant
 
     [Required]
     public TimeSpan ClosingHour { get; set; } = TimeSpan.FromHours(24);
-
-    //[Required]
-    //[Range(1, 500, ErrorMessage = "Seating capacity must be between 1 and 500.")]
-    //public int SeatingCapacity { get; set; }
-
-    public List<RestaurantTable> Tables { get; set; } = new List<RestaurantTable>();
 
     [Phone]
     [StringLength(20)]

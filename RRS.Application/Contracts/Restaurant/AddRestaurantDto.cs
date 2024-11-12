@@ -18,10 +18,6 @@ public class AddRestaurantDto
     [Required]
     public string ClosingHour { get; set; }
 
-    [Required]
-    [Range(1, 500, ErrorMessage = "Seating capacity must be between 1 and 500.")]
-    public int SeatingCapacity { get; set; }
-
     [Phone]
     [StringLength(20)]
     public string? PhoneNumber { get; set; }

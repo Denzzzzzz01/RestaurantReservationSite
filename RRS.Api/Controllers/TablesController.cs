@@ -35,7 +35,7 @@ public class TablesController : BaseController
     {
         var user = await GetCurrentUserAsync();
 
-        if (user == null)
+        if (user is null)
         {
             return Unauthorized("User is not authenticated.");
         }
