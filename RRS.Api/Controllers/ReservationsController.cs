@@ -46,8 +46,8 @@ public class ReservationsController : BaseController
         
 
         var user = await GetCurrentUserAsync();
-        var command = dto.Adapt<BookTableCommand>();
-        command = command with { User = user };
+        var command = dto.Adapt<BookTableCommand>() with { User = user };
+        //command = command with { User = user };
 
         var reservationId = await _mediator.Send(command);
         return Ok(reservationId);

@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { RestaurantDto } from "../../models/RestaurantDTO";
+import { RestaurantDto } from "../../models/RestaurantDto";
 import { getRestaurants } from "../../services/RestaurantService";
+import BookTableForm from "../../components/BookTableForm/BookTableForm";
 
 type Props = {};
 
-const HomePage = (props: Props) => {
+const HomePage: React.FC<Props> = () => {
   const [restaurants, setRestaurants] = useState<RestaurantDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [hasMore, setHasMore] = useState<boolean>(true); 
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
-      setLoading(true);  
-      setError(null);    
+      setLoading(true);
+      setError(null);
 
       try {
         const data = await getRestaurants(pageNumber, pageSize);
@@ -35,16 +35,14 @@ const HomePage = (props: Props) => {
     };
 
     fetchRestaurants();
-  }, [pageNumber, pageSize]);  
-
+  }, [pageNumber, pageSize]);
 
   const handleNextPage = () => setPageNumber((prev) => prev + 1);
   const handlePreviousPage = () => setPageNumber((prev) => Math.max(prev - 1, 1));
   const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPageSize(Number(event.target.value));
-    setPageNumber(1); 
+    setPageNumber(1);
   };
-
 
   if (loading) {
     return <div>Loading...</div>;
@@ -57,7 +55,7 @@ const HomePage = (props: Props) => {
   return (
     <div>
       <h1>Restaurants List</h1>
-      
+
       <div>
         <label htmlFor="pageSize">Page Size: </label>
         <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
@@ -72,8 +70,8 @@ const HomePage = (props: Props) => {
           <li key={restaurant.id}>
             <h2>{restaurant.name}</h2>
             <p>{restaurant.address.street}, {restaurant.address.city}, {restaurant.address.country}</p>
-            <p>Seating Capacity: {restaurant.seatingCapacity}</p>
             <p>Opening Hours: {restaurant.openingHour} - {restaurant.closingHour}</p>
+            <BookTableForm restaurantId={restaurant.id} />
           </li>
         ))}
       </ul>

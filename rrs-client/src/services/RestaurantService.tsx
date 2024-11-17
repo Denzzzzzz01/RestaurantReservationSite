@@ -1,5 +1,5 @@
 import axios from "axios";
-import { RestaurantDto } from "../models/RestaurantDTO";
+import { RestaurantDto } from "../models/RestaurantDto";
 
 const API_URL = "/api/Restaurants";
 
