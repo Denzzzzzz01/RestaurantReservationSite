@@ -92,17 +92,17 @@ public class RestaurantsController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllRestaurants(int PageNumber = 1, int PageSize = 10)
+    public async Task<IActionResult> GetAllRestaurants(int pageNumber = 1, int pageSize = 10)
     {
-        var query = new GetRestaurantsQuery(PageNumber, PageSize);
-        var restaurants = await _mediator.Send(query);
+        var query = new GetRestaurantsQuery(pageNumber, pageSize);
+        var result = await _mediator.Send(query);
 
-        if (restaurants == null || !restaurants.Any())
+        if (result.Items == null || !result.Items.Any())
         {
             return NotFound("No restaurants found.");
         }
 
-        return Ok(restaurants);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

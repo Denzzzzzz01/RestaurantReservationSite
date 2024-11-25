@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { RestaurantDto } from "../../models/RestaurantDto";
 import { getRestaurants } from "../../services/RestaurantService";
-import BookTableForm from "../../components/BookTableForm/BookTableForm";
+import BookTableForm from "../../components/bookTableForm/BookTableForm";
+import Modal from "../../components/modal/Modal";
 
-type Props = {};
-
-const HomePage: React.FC<Props> = () => {
+const HomePage: React.FC = () => {
   const [restaurants, setRestaurants] = useState<RestaurantDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -20,13 +23,9 @@ const HomePage: React.FC<Props> = () => {
 
       try {
         const data = await getRestaurants(pageNumber, pageSize);
-
-        if (data.length === 0) {
-          setHasMore(false);
-        } else {
-          setRestaurants(data);
-          setHasMore(true);
-        }
+        setRestaurants(data.items);
+        setTotalCount(data.totalCount);
+        setTotalPages(data.totalPages);
       } catch (err) {
         setError("Failed to load restaurants.");
       } finally {
@@ -42,6 +41,14 @@ const HomePage: React.FC<Props> = () => {
   const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPageSize(Number(event.target.value));
     setPageNumber(1);
+  };
+
+  const openModal = (restaurantId: string) => {
+    setSelectedRestaurantId(restaurantId);
+  };
+
+  const closeModal = () => {
+    setSelectedRestaurantId(null);
   };
 
   if (loading) {
@@ -65,13 +72,27 @@ const HomePage: React.FC<Props> = () => {
         </select>
       </div>
 
+      <p>
+        Showing {restaurants.length} of {totalCount} restaurants
+      </p>
+
       <ul>
         {restaurants.map((restaurant) => (
           <li key={restaurant.id}>
             <h2>{restaurant.name}</h2>
-            <p>{restaurant.address.street}, {restaurant.address.city}, {restaurant.address.country}</p>
-            <p>Opening Hours: {restaurant.openingHour} - {restaurant.closingHour}</p>
-            <BookTableForm restaurantId={restaurant.id} />
+            <p>
+              {restaurant.address.street}, {restaurant.address.city},{" "}
+              {restaurant.address.country}
+            </p>
+            <p>
+              Opening Hours: {restaurant.openingHour} - {restaurant.closingHour}
+            </p>
+            <button
+              className="btn-book"
+              onClick={() => openModal(restaurant.id)}
+            >
+              Book a Table
+            </button>
           </li>
         ))}
       </ul>
@@ -80,11 +101,26 @@ const HomePage: React.FC<Props> = () => {
         <button onClick={handlePreviousPage} disabled={pageNumber === 1}>
           Previous Page
         </button>
-        <span> Page {pageNumber} </span>
-        <button onClick={handleNextPage} disabled={!hasMore}>
+        <span>
+          Page {pageNumber} of {totalPages}
+        </span>
+        <button onClick={handleNextPage} disabled={pageNumber >= totalPages}>
           Next Page
         </button>
       </div>
+
+      <Modal
+        isOpen={!!selectedRestaurantId}
+        onClose={closeModal}
+        title="Book a Table"
+      >
+        {selectedRestaurantId && (
+          <BookTableForm
+            restaurantId={selectedRestaurantId}
+            onClose={closeModal}
+          />
+        )}
+      </Modal>
     </div>
   );
 };

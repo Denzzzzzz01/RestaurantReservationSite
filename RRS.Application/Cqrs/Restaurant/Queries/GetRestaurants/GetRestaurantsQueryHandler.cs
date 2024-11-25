@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using RRS.Application.Contracts.AppUser;
+using RRS.Application.Contracts.Common;
 using RRS.Application.Contracts.Restaurant;
 using RRS.Application.Interfaces;
 
 namespace RRS.Application.Cqrs.Restaurant.Queries.GetRestaurants;
 
-public class GetRestaurantsQueryHandler : IRequestHandler<GetRestaurantsQuery, List<RestaurantSummaryDto>>
+public class GetRestaurantsQueryHandler : IRequestHandler<GetRestaurantsQuery, PagedResult<RestaurantSummaryDto>>
 {
     private readonly IAppDbContext _dbContext;
 
@@ -15,9 +15,14 @@ public class GetRestaurantsQueryHandler : IRequestHandler<GetRestaurantsQuery, L
         _dbContext = dbContext;
     }
 
-    public async Task<List<RestaurantSummaryDto>> Handle(GetRestaurantsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<RestaurantSummaryDto>> Handle(GetRestaurantsQuery request, CancellationToken cancellationToken)
     {
+        var totalCount = await _dbContext.Restaurants.CountAsync(cancellationToken);
+
+        var totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
+
         var restaurants = await _dbContext.Restaurants
+            .OrderBy(r => r.Name)
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize)
             .AsNoTracking()
@@ -29,10 +34,15 @@ public class GetRestaurantsQueryHandler : IRequestHandler<GetRestaurantsQuery, L
                 OpeningHour = r.OpeningHour,
                 ClosingHour = r.ClosingHour
             })
-            .OrderBy(r => r.Name)
-            .ToListAsync(cancellationToken); 
+            .ToListAsync(cancellationToken);
 
-        return restaurants;
+        return new PagedResult<RestaurantSummaryDto>
+        {
+            Items = restaurants,
+            TotalCount = totalCount,
+            TotalPages = totalPages
+        };
     }
+
 }
 

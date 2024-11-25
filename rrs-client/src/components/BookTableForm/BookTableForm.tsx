@@ -1,59 +1,50 @@
 import React, { useState } from "react";
 import { BookTableDto } from "../../models/BookTableDto";
 import { bookTable } from "../../services/ReservationService";
+import { toastPromise, notifyError } from "../../utils/toastUtils";
 
 type Props = {
   restaurantId: string;
+  onClose: () => void;
 };
 
-const BookTableForm: React.FC<Props> = ({ restaurantId }) => {
+const BookTableForm: React.FC<Props> = ({ restaurantId, onClose }) => {
   const [reservationDate, setReservationDate] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("12:00");
   const [numberOfSeats, setNumberOfSeats] = useState<number>(1);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
-  
+
+    const isoDateTime = new Date(reservationDate).toISOString();
+    const formattedStartTime = `${startTime}:00`;
+
+    const dto: BookTableDto = {
+      restaurantId,
+      reservationDate: isoDateTime,
+      startTime: formattedStartTime,
+      numberOfSeats,
+    };
+
     try {
-      const isoDateTime = new Date(reservationDate).toISOString();
-      const formattedStartTime = `${startTime}:00`;
-  
-      const dto: BookTableDto = {
-        restaurantId,
-        reservationDate: isoDateTime,
-        startTime: formattedStartTime,
-        numberOfSeats,
-      };
-  
-      console.log("Prepared DTO:", dto); 
-  
-      await bookTable(dto);
-      setSuccess("Table booked successfully!");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Booking error:", err); 
-        setError(err.message);
-      } else {
-        console.error("Unexpected booking error:", err); 
-        setError("An unexpected error occurred.");
-      }
+      await toastPromise(
+        bookTable(dto),
+        "Processing your reservation...",
+        "Table booked successfully!",
+        "Failed to book the table"
+      );
+      onClose(); // Close the modal on success
+    } catch (error) {
+      console.error("Booking error:", error);
+      notifyError("An unexpected error occurred while booking.");
     }
   };
-  
 
   return (
-    <form onSubmit={handleSubmit} style={{ border: "1px solid #ccc", padding: "16px", borderRadius: "8px" }}>
-      <h2>Book a Table !!!</h2>
-      
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-
-      <div>
-        <label htmlFor="reservationDate">Date: </label>
+    <form onSubmit={handleSubmit} className="book-table-form">
+      <h2>Book a Table</h2>
+      <div className="form-group">
+        <label htmlFor="reservationDate">Date:</label>
         <input
           id="reservationDate"
           type="date"
@@ -63,8 +54,8 @@ const BookTableForm: React.FC<Props> = ({ restaurantId }) => {
         />
       </div>
 
-      <div>
-        <label htmlFor="startTime">Start Time: </label>
+      <div className="form-group">
+        <label htmlFor="startTime">Start Time:</label>
         <input
           id="startTime"
           type="time"
@@ -74,8 +65,8 @@ const BookTableForm: React.FC<Props> = ({ restaurantId }) => {
         />
       </div>
 
-      <div>
-        <label htmlFor="numberOfSeats">Number of Seats: </label>
+      <div className="form-group">
+        <label htmlFor="numberOfSeats">Number of Seats:</label>
         <input
           id="numberOfSeats"
           type="number"
@@ -87,7 +78,7 @@ const BookTableForm: React.FC<Props> = ({ restaurantId }) => {
         />
       </div>
 
-      <button type="submit" style={{ marginTop: "12px" }}>
+      <button type="submit" className="btn-submit">
         Book Table
       </button>
     </form>

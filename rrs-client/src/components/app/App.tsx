@@ -2,7 +2,7 @@ import './App.scss'
 import { Outlet } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { UserProvider } from '../../context/useAuth'
-import Navbar from './navbar/Navbar'
+import Navbar from '../navbar/Navbar'
 
 function App() {
 
