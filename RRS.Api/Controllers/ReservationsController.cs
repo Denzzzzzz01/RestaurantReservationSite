@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RRS.Application.Contracts.Reservations;
 using RRS.Application.Cqrs.TableBooking.Commands.BookTable;
+using RRS.Application.Cqrs.TableBooking.Commands.CancelReservation;
 using RRS.Application.Cqrs.TableBooking.Commands.ChangeReservationStatus;
 using RRS.Application.Cqrs.TableBooking.Queries.GetRestaurantReservation;
 using RRS.Application.Cqrs.TableBooking.Queries.GetUserReservations;
@@ -13,7 +14,7 @@ using RRS.Core.Models;
 
 namespace RRS.Api.Controllers;
 
-[Authorize]
+
 public class ReservationsController : BaseController
 {
     private readonly IMediator _mediator;
@@ -23,6 +24,7 @@ public class ReservationsController : BaseController
         _mediator = mediator;
     }
 
+    [Authorize(Roles = "RestaurantManager")]
     [HttpGet("restaurant/{restaurantId}")]
     public async Task<IActionResult> GetRestaurantReservations(Guid restaurantId, [FromQuery] ReservationFilter filter = ReservationFilter.All)
     {
@@ -30,6 +32,7 @@ public class ReservationsController : BaseController
         return Ok(reservations);
     }
 
+    [Authorize]
     [HttpGet("user")]
     public async Task<IActionResult> GetUserReservations([FromQuery] ReservationFilter filter = ReservationFilter.All)
     {
@@ -38,6 +41,7 @@ public class ReservationsController : BaseController
         return Ok(reservations);
     }
 
+    [Authorize]
     [HttpPost("book-table")]
     public async Task<IActionResult> BookTable([FromBody] BookTableDto dto)
     {
@@ -47,12 +51,12 @@ public class ReservationsController : BaseController
 
         var user = await GetCurrentUserAsync();
         var command = dto.Adapt<BookTableCommand>() with { User = user };
-        //command = command with { User = user };
 
         var reservationId = await _mediator.Send(command);
         return Ok(reservationId);
     }
 
+    [Authorize(Roles = "RestaurantManager")]
     [HttpPost("change-status")]
     public async Task<IActionResult> ChangeReservationStatus(Guid reservationId, ReservationStatus newStatus)
     {
@@ -63,5 +67,18 @@ public class ReservationsController : BaseController
 
         return Ok(reservationId);
     }
+
+    [Authorize]
+    [HttpPost("cancel")]
+    public async Task<IActionResult> CancelReservation(Guid reservationId)
+    {
+        var user = await GetCurrentUserAsync();
+
+        var command = new CancelReservationCommand(reservationId, user.Id);
+        await _mediator.Send(command);
+
+        return Ok(new { Message = "Reservation cancelled successfully." });
+    }
+
 
 }

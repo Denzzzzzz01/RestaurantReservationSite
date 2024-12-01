@@ -3,6 +3,7 @@ import { createRestaurant } from "../../services/RestaurantService";
 import Modal from "../modal/Modal";
 import { CreateRestaurantDto } from "../../models/CreateRestaurantDto";
 import { toastPromise, notifyError } from "../../utils/toastUtils";
+import { useAuth } from "../../context/useAuth";
 
 interface AddRestaurantModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface AddRestaurantModalProps {
 }
 
 const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose }) => {
+  const { refreshToken } = useAuth(); 
   const [restaurant, setRestaurant] = useState<Omit<CreateRestaurantDto, "id">>({
     name: "",
     address: {
@@ -55,6 +57,9 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
         "Restaurant added successfully!",
         "Failed to add the restaurant"
       );
+
+      await refreshToken(); 
+      
       onClose(); 
     } catch (error) {
       console.error("Error adding restaurant:", error);

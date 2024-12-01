@@ -22,13 +22,10 @@ public class DeleteRestaurantCommandHandler : IRequestHandler<DeleteRestaurantCo
         var restaurant = await _dbContext.Restaurants
             .AsNoTracking()
             .Where(r => r.Id == request.Id)
-            //.Where(r => r.Manageres.Any(m => m.AppUserId == request.User.Id))
             .Include(r => r.Manageres)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (restaurant is null)
-            throw new InvalidOperationException("Restaurant not found.");
-
+            .FirstOrDefaultAsync(cancellationToken) 
+            ?? throw new InvalidOperationException("Restaurant not found.");
+        
         var affectedRows = await _dbContext.Restaurants
             .Where(r => r.Id == request.Id)
             .ExecuteDeleteAsync(cancellationToken);
@@ -42,12 +39,13 @@ public class DeleteRestaurantCommandHandler : IRequestHandler<DeleteRestaurantCo
             .ToListAsync(cancellationToken);
         foreach (var manager in managers)
         {
-            manager.isRestaurantManager = false;
-            await _userManager.UpdateAsync(manager);
+            //if (await _userManager.IsInRoleAsync(manager, "RestaurantManager"))
+            await _userManager.RemoveFromRoleAsync(manager, "RestaurantManager");
         }
 
         return request.Id;
     }
+
 }
 
 

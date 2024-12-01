@@ -47,7 +47,7 @@ public class RestaurantsController : BaseController
         return Ok(addedRestaurantId);
     }
 
-    [Authorize]
+    [Authorize(Roles = "RestaurantManager")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateRestaurant(Guid id, [FromBody] UpdateRestaurantDto dto)
     {

@@ -33,7 +33,7 @@ const BookTableForm: React.FC<Props> = ({ restaurantId, onClose }) => {
         "Table booked successfully!",
         "Failed to book the table"
       );
-      onClose(); // Close the modal on success
+      onClose(); 
     } catch (error) {
       console.error("Booking error:", error);
       notifyError("An unexpected error occurred while booking.");

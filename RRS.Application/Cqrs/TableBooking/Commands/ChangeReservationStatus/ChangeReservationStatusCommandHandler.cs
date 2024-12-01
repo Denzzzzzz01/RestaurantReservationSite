@@ -29,10 +29,7 @@ public class ChangeReservationStatusCommandHandler : IRequestHandler<ChangeReser
             .Include(u => u.RestaurantManagerData)
             .FirstOrDefaultAsync(u => u.Id == request.UserId);
 
-        if (currentUser is null || !currentUser.isRestaurantManager)
-        throw new ReservationException("Only restaurant managers can change reservation status.");
-
-        if (currentUser.RestaurantManagerData?.RestaurantId != reservation.RestaurantId)
+        if (currentUser?.RestaurantManagerData?.RestaurantId != reservation.RestaurantId)
             throw new ReservationException("You are not authorized to manage this restaurant.");
 
         reservation.Status = request.NewStatus;
@@ -41,5 +38,6 @@ public class ChangeReservationStatusCommandHandler : IRequestHandler<ChangeReser
 
         return reservation.Id;
     }
+
 }
 

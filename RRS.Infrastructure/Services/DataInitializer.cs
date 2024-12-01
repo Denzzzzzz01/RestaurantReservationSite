@@ -29,6 +29,12 @@ public class DataInitializer
             Name = "User", 
             NormalizedName = "USER" 
         };
+        var managerRole = new IdentityRole<Guid>
+        {
+            Id = Guid.Parse("5E226760-1A39-4ACB-B6FB-DA1A7E2D10A5"),
+            Name = "RestaurantManager",
+            NormalizedName = "RESTAURANTMANAGER"
+        };
 
         if (!await _roleManager.RoleExistsAsync(adminRole.Name))
         {
@@ -40,8 +46,13 @@ public class DataInitializer
             await _roleManager.CreateAsync(userRole);
         }
 
+        if (!await _roleManager.RoleExistsAsync(managerRole.Name))
+        {
+            await _roleManager.CreateAsync(managerRole);
+        }
+
         var adminUser = await _userManager.FindByNameAsync("admin");
-        if (adminUser == null)
+        if (adminUser is null)
         {
             adminUser = new AppUser
             {

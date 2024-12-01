@@ -1,4 +1,3 @@
-
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import React from "react";
@@ -6,14 +5,16 @@ import axios from "axios";
 import { UserProfile } from "../models/User";
 import { loginAPI, registerAPI } from "../services/AuthService";
 import { notifySuccess, notifyWarning } from "../utils/toastUtils";
+import { jwtDecode } from "jwt-decode";
 
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
-  registerUser: ( username: string, email: string, password: string) => void;
+  registerUser: (username: string, email: string, password: string) => void;
   loginUser: (email: string, password: string) => void;
   logout: () => void;
   isLoggedIn: () => boolean;
+  refreshToken: () => Promise<void>; 
 };
 
 type Props = { children: React.ReactNode };
@@ -49,14 +50,14 @@ export const UserProvider = ({ children }: Props) => {
           localStorage.setItem("user", JSON.stringify(userObj));
           setToken(res?.data.token!);
           setUser(userObj!);
-          axios.defaults.headers.common["Authorization"] = "Bearer " + res?.data.token; 
+          axios.defaults.headers.common["Authorization"] = "Bearer " + res?.data.token;
           notifySuccess("Login Success!");
           navigate("/");
         }
       })
-      .catch(() => notifyWarning("Server error occured"));
+      .catch(() => notifyWarning("Server error occurred"));
   };
-  
+
   const registerUser = async (username: string, email: string, password: string) => {
     await registerAPI(username, email, password)
       .then((res) => {
@@ -74,8 +75,39 @@ export const UserProvider = ({ children }: Props) => {
           navigate("/");
         }
       })
-      .catch(() => notifyWarning("Server error occured"));
+      .catch(() => notifyWarning("Server error occurred"));
   };
+
+  const refreshToken = async () => {
+    try {
+      const res = await axios.post("/api/Account/refresh-token");
+      const newToken = res.data.token;
+  
+      if (!newToken) {
+        console.error("Failed to retrieve new token");
+        return;
+      }
+  
+      localStorage.setItem("token", newToken);
+      setToken(newToken);
+      axios.defaults.headers.common["Authorization"] = "Bearer " + newToken;
+  
+      const decodedToken: any = jwtDecode(newToken);
+      const updatedUser = {
+        username: decodedToken.given_name,
+        email: decodedToken.email,
+        roles: decodedToken.role || [],
+      };
+  
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      notifyWarning("Failed to refresh token, please log in again.");
+      logout(); 
+    }
+  };
+  
   
 
   const isLoggedIn = () => {
@@ -90,11 +122,10 @@ export const UserProvider = ({ children }: Props) => {
     axios.defaults.headers.common["Authorization"] = null;
     navigate("/");
   };
-  
 
   return (
     <UserContext.Provider
-      value={{ user, token, logout, isLoggedIn, registerUser, loginUser }}
+      value={{ user, token, logout, isLoggedIn, registerUser, loginUser, refreshToken }}
     >
       {isReady ? children : null}
     </UserContext.Provider>

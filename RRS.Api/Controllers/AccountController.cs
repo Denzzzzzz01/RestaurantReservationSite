@@ -161,9 +161,17 @@ public class AccountController : BaseController
 
         return Ok(new
         {
-            IsMAnager = appUser.isRestaurantManager,
             Roles = roles
-    });
+        });
+    }
+
+    [Authorize]
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken()
+    {
+        var appUser = await GetCurrentUserAsync();
+        var newToken = await _tokenService.CreateToken(appUser);
+        return Ok(new { Token = newToken });
     }
 
 }

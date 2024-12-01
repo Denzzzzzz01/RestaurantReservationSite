@@ -29,7 +29,6 @@ public class AddRestaurantCommandHandler : IRequestHandler<AddRestaurantCommand,
                 if (isManager)
                     throw new InvalidOperationException("User is already a manager of another restaurant.");
 
-
                 var restaurant = request.Adapt<Restaurant>();
                 var restaurantManager = new RestaurantManagerData
                 {
@@ -38,9 +37,9 @@ public class AddRestaurantCommandHandler : IRequestHandler<AddRestaurantCommand,
                     Restaurant = restaurant
                 };
 
-                request.User.isRestaurantManager = true;
-                await _userManager.UpdateAsync(request.User);
-
+                if (!(await _userManager.IsInRoleAsync(request.User, "RestaurantManager")))
+                    await _userManager.AddToRoleAsync(request.User, "RestaurantManager");
+                
                 restaurant.Manageres.Add(restaurantManager);
                 _dbContext.Restaurants.Add(restaurant);
 
@@ -57,4 +56,5 @@ public class AddRestaurantCommandHandler : IRequestHandler<AddRestaurantCommand,
             }
         }
     }
+
 }

@@ -29,7 +29,7 @@ public class TablesController : BaseController
         return Ok(tables);
     }
 
-    [Authorize]
+    [Authorize(Roles = "RestaurantManager")]
     [HttpPost("{restaurantId:guid}/tables")]
     public async Task<IActionResult> AddRestaurantTables(Guid restaurantId, [FromBody] AddRestaurantTablesDto dto)
     {
