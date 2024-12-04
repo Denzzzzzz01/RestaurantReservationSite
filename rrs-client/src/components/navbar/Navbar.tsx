@@ -1,29 +1,32 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import AddRestaurantModal from "../addRestaurantModal/AddRestaurantModal";
-import { jwtDecode } from "jwt-decode";
+import { getUserRestaurant } from "../../services/RestaurantService";
 
 const Navbar = () => {
   const { isLoggedIn, user, logout, token } = useAuth();
   const [isAddRestaurantOpen, setIsAddRestaurantOpen] = useState(false);
-  const [isRestaurantManager, setIsRestaurantManager] = useState(false);
+  const [restaurant, setRestaurant] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
-    if (token) {
+    const fetchRestaurant = async () => {
       try {
-        const decoded: { role?: string[] } = jwtDecode(token);
-        const hasRole = decoded.role?.includes("RestaurantManager") || false;
-        setIsRestaurantManager(hasRole);
+        if (isLoggedIn()) {
+          const userRestaurant = await getUserRestaurant();
+          setRestaurant(userRestaurant);
+        } else {
+          setRestaurant(null);
+        }
       } catch (error) {
-        console.error("Error decoding token:", error);
-        setIsRestaurantManager(false);
+        console.error("Failed to fetch restaurant information:", error);
+        setRestaurant(null);
       }
-    } else {
-      setIsRestaurantManager(false);
-    }
-  }, [token]);
-  
+    };
+
+    fetchRestaurant();
+  }, [isLoggedIn, token]); 
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -35,18 +38,22 @@ const Navbar = () => {
         <div className="navbar-right">
           {isLoggedIn() ? (
             <>
-              {isRestaurantManager ? (
-                <button>MyRestaurant</button>
+              <Link to="/reservations" className="navbar-link">
+                My Reservations
+              </Link>
+              {restaurant ? (
+                <Link to={`/restaurants/${restaurant.id}`} className="navbar-link">
+                  {restaurant.name}
+                </Link>
               ) : (
-                <button onClick={() => setIsAddRestaurantOpen(true)}>
-                  Add Restaurant
-                </button>
+                <button onClick={() => setIsAddRestaurantOpen(true)}>Add Restaurant</button>
               )}
-              <span className="navbar-welcome">
-                Welcome, {user?.username}
-              </span>
+              <span className="navbar-welcome">Welcome, {user?.username}</span>
               <button
-                onClick={logout}
+                onClick={() => {
+                  setRestaurant(null); 
+                  logout();
+                }}
                 className="navbar-btn navbar-logout-btn"
               >
                 Logout
@@ -65,10 +72,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      <AddRestaurantModal
-        isOpen={isAddRestaurantOpen}
-        onClose={() => setIsAddRestaurantOpen(false)}
-      />
+      <AddRestaurantModal isOpen={isAddRestaurantOpen} onClose={() => setIsAddRestaurantOpen(false)} />
     </nav>
   );
 };

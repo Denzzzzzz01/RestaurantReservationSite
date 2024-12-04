@@ -174,4 +174,20 @@ public class AccountController : BaseController
         return Ok(new { Token = newToken });
     }
 
+    [HttpGet("restaurant")]
+    [Authorize(Roles = "RestaurantManager")]
+    public async Task<IActionResult> GetUserRestaurant()
+    {
+        var userEmail = User.FindFirstValue(ClaimTypes.Email);
+        var appUser = await _userManager.Users
+            .Include(u => u.RestaurantManagerData)
+            .ThenInclude(rmd => rmd.Restaurant) 
+            .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+        if (appUser is null)
+            throw new UnauthorizedAccessException("User not found");
+
+        return Ok(new { id = appUser.RestaurantManagerData.Restaurant.Id, name = appUser.RestaurantManagerData.Restaurant.Name });
+    }
+
 }
