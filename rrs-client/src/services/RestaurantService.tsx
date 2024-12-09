@@ -54,3 +54,20 @@ export const getUserRestaurant = async (): Promise<{ id: string; name: string }>
     throw error;
   }
 };
+
+export const searchRestaurants = async (
+  query: string,
+  pageNumber: number,
+  pageSize: number
+): Promise<PagedResult<RestaurantDto>> => {
+  try {
+    const response = await axios.get(`${API_URL}/search`, {
+      params: { query, pageNumber, pageSize },
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error searching restaurants:", error);
+    throw new Error("Failed to search restaurants. Please try again.");
+  }
+};

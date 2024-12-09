@@ -33,7 +33,7 @@ public class AddRestaurantTablesCommandHandler : IRequestHandler<AddRestaurantTa
                 if (!isManager)
                     throw new InvalidOperationException("User is not a manager of this restaurant.");
 
-                int maxTableNumber = restaurant.Tables.Any() ? restaurant.Tables.Max(t => t.TableNumber) : 1;
+                int maxTableNumber = restaurant.Tables.Any() ? restaurant.Tables.Max(t => t.TableNumber) : 0;
 
                 var newTables = new List<RestaurantTable>();
                 for (int i = 0; i < request.NumberOfTables; i++)

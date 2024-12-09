@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using RRS.Application.Contracts.Common;
 using RRS.Application.Contracts.Restaurant;
 using RRS.Application.Interfaces;
 
 namespace RRS.Application.Cqrs.Restaurant.Queries.SearchRestaurants;
 
-public class SearchRestaurantsQueryHandler : IRequestHandler<SearchRestaurantsQuery, List<RestaurantSummaryDto>>
+public class SearchRestaurantsQueryHandler : IRequestHandler<SearchRestaurantsQuery, PagedResult<RestaurantSummaryDto>>
 {
     private readonly IAppDbContext _dbContext;
 
@@ -14,7 +15,7 @@ public class SearchRestaurantsQueryHandler : IRequestHandler<SearchRestaurantsQu
         _dbContext = dbContext;
     }
 
-    public async Task<List<RestaurantSummaryDto>> Handle(SearchRestaurantsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<RestaurantSummaryDto>> Handle(SearchRestaurantsQuery request, CancellationToken cancellationToken)
     {
         var searchTerm = request.SearchCriteria.Query?.ToLower();
 
@@ -22,9 +23,10 @@ public class SearchRestaurantsQueryHandler : IRequestHandler<SearchRestaurantsQu
             ? new List<RestaurantSummaryDto>()
             : await _dbContext.Restaurants
                 .Where(r => r.Name.ToLower().Contains(searchTerm) ||
-                            r.Address.Street.ToLower().Contains(searchTerm) ||
-                            r.Address.City.ToLower().Contains(searchTerm) ||
-                            r.Address.Country.ToLower().Contains(searchTerm))
+                    r.Address.Street.ToLower().Contains(searchTerm) ||
+                    r.Address.City.ToLower().Contains(searchTerm) ||
+                    r.Address.Country.ToLower().Contains(searchTerm))
+                .AsNoTracking()
                 .Select(r => new RestaurantSummaryDto
                 {
                     Id = r.Id,
@@ -35,6 +37,14 @@ public class SearchRestaurantsQueryHandler : IRequestHandler<SearchRestaurantsQu
                 })
                 .ToListAsync(cancellationToken);
 
-        return restaurants;
+        var totalCount = restaurants.Count;
+        var totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
+
+        return new PagedResult<RestaurantSummaryDto>
+        {
+            Items = restaurants,
+            TotalCount = totalCount,
+            TotalPages = totalPages
+        };
     }
 }

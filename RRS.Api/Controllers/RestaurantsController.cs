@@ -125,12 +125,12 @@ public class RestaurantsController : BaseController
     }
 
     [HttpGet("search")]
-    public async Task<IActionResult> SearchRestaurants([FromQuery] SearchRestaurantsDto searchDto)
+    public async Task<IActionResult> SearchRestaurants([FromQuery] SearchRestaurantsDto searchDto, int pageNumber = 1, int pageSize = 10)
     {
-        var query = new SearchRestaurantsQuery(searchDto);
+        var query = new SearchRestaurantsQuery(searchDto, pageNumber, pageSize);
         var restaurants = await _mediator.Send(query);
 
-        if (restaurants is null || !restaurants.Any())
+        if (restaurants is null || !restaurants.Items.Any())
             return NotFound("No restaurants found.");
         
 

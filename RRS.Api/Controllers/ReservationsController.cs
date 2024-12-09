@@ -77,7 +77,7 @@ public class ReservationsController : BaseController
         var command = new CancelReservationCommand(reservationId, user.Id);
         await _mediator.Send(command);
 
-        return Ok(new { Message = "Reservation cancelled successfully." });
+        return Ok();
     }
 
 

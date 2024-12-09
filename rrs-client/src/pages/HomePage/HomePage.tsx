@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { RestaurantDto } from "../../models/RestaurantDto";
-import { getRestaurants } from "../../services/RestaurantService";
+import { getRestaurants, searchRestaurants } from "../../services/RestaurantService";
 import BookTableForm from "../../components/bookTableForm/BookTableForm";
 import Modal from "../../components/modal/Modal";
+import { debounce } from "lodash";
 
 const HomePage: React.FC = () => {
   const [restaurants, setRestaurants] = useState<RestaurantDto[]>([]);
@@ -14,27 +15,67 @@ const HomePage: React.FC = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
 
+  const fetchRestaurants = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await getRestaurants(pageNumber, pageSize);
+      setRestaurants(data.items);
+      setTotalCount(data.totalCount);
+      setTotalPages(data.totalPages);
+    } catch (err) {
+      setError("Failed to load restaurants.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchRestaurants = async () => {
+    if (!isSearching) {
+      fetchRestaurants();
+    }
+  }, [pageNumber, pageSize, isSearching]);
+
+  const debouncedSearch = useCallback(
+    debounce(async (query: string) => {
+      if(query.length === 0)
+      {
+        setIsSearching(false);
+        return;
+      }
+      else if (query.length < 3) {
+        return;
+      }
+
+      setIsSearching(true);
       setLoading(true);
-      setError(null);
 
       try {
-        const data = await getRestaurants(pageNumber, pageSize);
+        const data = await searchRestaurants(query, 1, pageSize);
         setRestaurants(data.items);
         setTotalCount(data.totalCount);
         setTotalPages(data.totalPages);
+        setPageNumber(1);
       } catch (err) {
-        setError("Failed to load restaurants.");
+        setError("Failed to search restaurants.");
       } finally {
         setLoading(false);
       }
-    };
+    }, 500),
+    [pageSize]
+  );
 
-    fetchRestaurants();
-  }, [pageNumber, pageSize]);
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
+  };
 
   const handleNextPage = () => setPageNumber((prev) => prev + 1);
   const handlePreviousPage = () => setPageNumber((prev) => Math.max(prev - 1, 1));
@@ -51,22 +92,25 @@ const HomePage: React.FC = () => {
     setSelectedRestaurantId(null);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div>
       <h1>Restaurants List</h1>
 
       <div>
+        <label htmlFor="search">Search Restaurants: </label>
+        <input
+          id="search"
+          type="text"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Enter restaurant name"
+        />
+      </div>
+
+      <div>
         <label htmlFor="pageSize">Page Size: </label>
         <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
-          <option value={5}>5</option>
+          <option value={2}>2</option>
           <option value={10}>10</option>
           <option value={20}>20</option>
         </select>
@@ -76,38 +120,51 @@ const HomePage: React.FC = () => {
         Showing {restaurants.length} of {totalCount} restaurants
       </p>
 
-      <ul>
-        {restaurants.map((restaurant) => (
-          <li key={restaurant.id}>
-            <h2>{restaurant.name}</h2>
-            <p>
-              {restaurant.address.street}, {restaurant.address.city},{" "}
-              {restaurant.address.country}
-            </p>
-            <p>
-              Opening Hours: {restaurant.openingHour} - {restaurant.closingHour}
-            </p>
-            <button
-              className="btn-book"
-              onClick={() => openModal(restaurant.id)}
-            >
-              Book a Table
-            </button>
-          </li>
-        ))}
-      </ul>
-
       <div>
-        <button onClick={handlePreviousPage} disabled={pageNumber === 1}>
-          Previous Page
-        </button>
-        <span>
-          Page {pageNumber} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={pageNumber >= totalPages}>
-          Next Page
-        </button>
-      </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>{error}</p>
+      ) : restaurants.length === 0 ? (
+        <p>No restaurants found. Try a different search.</p>
+      ) : (
+        <ul>
+          {restaurants.map((restaurant) => (
+            <li key={restaurant.id}>
+              <h2>{restaurant.name}</h2>
+              <p>
+                {restaurant.address.street}, {restaurant.address.city},{" "}
+                {restaurant.address.country}
+              </p>
+              <p>
+                Opening Hours: {restaurant.openingHour} -{" "}
+                {restaurant.closingHour}
+              </p>
+              <button
+                className="btn-book"
+                onClick={() => openModal(restaurant.id)}
+              >
+                Book a Table
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+      {!isSearching && (
+        <div>
+          <button onClick={handlePreviousPage} disabled={pageNumber === 1}>
+            Previous Page
+          </button>
+          <span>
+            Page {pageNumber} of {totalPages}
+          </span>
+          <button onClick={handleNextPage} disabled={pageNumber >= totalPages}>
+            Next Page
+          </button>
+        </div>
+      )}
 
       <Modal
         isOpen={!!selectedRestaurantId}
