@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getRestaurantById } from "../../services/RestaurantService";
+import { getRestaurantById, updateRestaurant } from "../../services/RestaurantService";
 import { DetailedRestaurantDto } from "../../models/DetailedRestaurantDto";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../../context/useAuth";
@@ -8,6 +8,10 @@ import { TableDto } from "../../models/TableDto";
 import { createTables, getRestaurantTables } from "../../services/TableService";
 import AddTablesForm from "../../components/addTablesForm/AddTablesForm";
 import Modal from "../../components/modal/Modal";
+import UpdateRestaurantForm from "../../components/updateRestaurantModal/updateRestaurantModal";
+import { RestaurantUpdateDto } from "../../models/RestaurantUpdateDto";
+import { notifyError, notifySuccess, toastPromise } from "../../utils/toastUtils";
+
 
 const RestaurantPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +22,7 @@ const RestaurantPage = () => {
   const [isManager, setIsManager] = useState(false); 
   const { token } = useAuth();
   const [isAddTablesModalOpen, setIsAddTablesModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -32,6 +37,7 @@ const RestaurantPage = () => {
           setTables(tablesData);
         }
       } catch (error) {
+        notifyError("Failed to fetch restaurant details or tables.");
         setError("Failed to fetch restaurant details or tables.");
       } finally {
         setLoading(false);
@@ -40,6 +46,7 @@ const RestaurantPage = () => {
 
     fetchRestaurantData();
   }, [id]);
+  
 
   const handleAddTables = async (
     numberOfTables: number,
@@ -53,10 +60,45 @@ const RestaurantPage = () => {
       setIsAddTablesModalOpen(false);
       const updatedTables = await getRestaurantTables(id); 
       setTables(updatedTables);
+      notifySuccess("Tables added successfully.");
     } catch (error) {
+      notifyError("Error adding tables.");
       console.error("Error adding tables:", error);
     }
   };
+  
+
+
+  // const handleUpdateRestaurant = async (updatedData: RestaurantUpdateDto) => {
+  //   if (!id) return;
+
+  //   try {
+  //     await updateRestaurant(id, updatedData);
+  //     const updatedRestaurant = await getRestaurantById(id);
+  //     setRestaurant(updatedRestaurant);
+  //     setIsUpdateModalOpen(false);
+  //     notifySuccess("Restaurant updated successfully.");
+  //   } catch (error) {
+  //     notifyError("Failed to update restaurant.");
+  //     console.error("Error updating restaurant:", error);
+  //   }
+  // };
+  const handleUpdateRestaurant = async (updatedData: RestaurantUpdateDto) => {
+    if (!id) return;
+  
+    await toastPromise(
+      updateRestaurant(id, updatedData)
+        .then(async () => {
+          const updatedRestaurant = await getRestaurantById(id);
+          setRestaurant(updatedRestaurant);
+          setIsUpdateModalOpen(false);
+        }),
+      "Updating restaurant...",
+      "Restaurant updated successfully!",
+      "Failed to update restaurant."
+    );
+  };
+  
 
   useEffect(() => {
     if (token) {
@@ -68,7 +110,6 @@ const RestaurantPage = () => {
       setIsManager(false);
     }
   }, [token]);
-  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -126,6 +167,12 @@ const RestaurantPage = () => {
 
       <button onClick={() => setIsAddTablesModalOpen(true)}>Add Tables</button>
 
+      {isManager && (
+        <button onClick={() => setIsUpdateModalOpen(true)}>
+          Update Restaurant
+        </button>
+      )}
+
       <Modal
         title="Add Tables"
         isOpen={isAddTablesModalOpen}
@@ -133,6 +180,20 @@ const RestaurantPage = () => {
       >
         <AddTablesForm onSubmit={handleAddTables} />
       </Modal>
+
+      <Modal
+            title="Update Restaurant"
+            isOpen={isUpdateModalOpen}
+            onClose={() => setIsUpdateModalOpen(false)}
+          >
+            {restaurant && (
+              <UpdateRestaurantForm
+                initialData={restaurant}
+                onSubmit={handleUpdateRestaurant}
+                onClose={() => setIsUpdateModalOpen(false)}
+              />
+            )}
+          </Modal>
     </div>
   );
 };

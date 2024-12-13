@@ -11,6 +11,7 @@ public interface IAppDbContext
     DbSet<Restaurant> Restaurants { get; set; }
     DbSet<Reservation> Reservations { get; set; }
     DbSet<RestaurantTable> RestaurantTables { get; set; }
+    DbSet<Notification> Notifications { get; set; }
 
     DatabaseFacade Database { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

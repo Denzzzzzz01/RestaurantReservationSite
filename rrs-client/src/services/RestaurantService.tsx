@@ -3,6 +3,7 @@ import { RestaurantDto } from "../models/RestaurantDto";
 import { PagedResult } from "../models/PagedResult";
 import { CreateRestaurantDto } from "../models/CreateRestaurantDto";
 import { DetailedRestaurantDto } from "../models/DetailedRestaurantDto";
+import { RestaurantUpdateDto } from "../models/RestaurantUpdateDto";
 
 const API_URL = "/api/Restaurants";
 
@@ -43,6 +44,14 @@ export const createRestaurant = async (
     console.error("Error creating restaurant", error);
     throw error;
   }
+};
+
+export const updateRestaurant = async (
+  id: string,
+  updatedRestaurant: RestaurantUpdateDto
+): Promise<void> => {
+  const response = await axios.put(`/api/Restaurants/${id}`, updatedRestaurant);
+  return response.data;
 };
 
 export const getUserRestaurant = async (): Promise<{ id: string; name: string }> => {

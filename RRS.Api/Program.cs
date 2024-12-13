@@ -9,6 +9,7 @@ using RRS.Application.Interfaces;
 using RRS.Application.Services;
 using RRS.Core.Models;
 using RRS.Infrastructure.Persistence;
+using RRS.Infrastructure.Repositories;
 using RRS.Infrastructure.Services;
 using System.Reflection;
 using System.Text;
@@ -104,6 +105,7 @@ MappingConfig.Configure();
 builder.Services.AddScoped<ITokenService, TokenSerive>();
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 builder.Services.AddScoped<IReservationAvailabilityService, ReservationAvailabilityService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddScoped<DataInitializer>();
 var app = builder.Build();
