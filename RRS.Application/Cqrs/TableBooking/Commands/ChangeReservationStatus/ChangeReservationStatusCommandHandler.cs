@@ -28,6 +28,7 @@ public class ChangeReservationStatusCommandHandler : IRequestHandler<ChangeReser
     {
         var reservation = await _dbContext.Reservations
             .Include(r => r.Restaurant)
+            .Include(r => r.User)
             .FirstOrDefaultAsync(r => r.Id == request.ReservationId, cancellationToken)
             ?? throw new ReservationException("Reservation not found");
 

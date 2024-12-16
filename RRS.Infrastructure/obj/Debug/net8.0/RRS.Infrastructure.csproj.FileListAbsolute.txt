@@ -17,3 +17,4 @@ D:\_Programming\RestaurantReservationSite\RRS.Infrastructure\obj\Debug\net8.0\re
 D:\_Programming\RestaurantReservationSite\RRS.Infrastructure\obj\Debug\net8.0\RRS.Infrastructure.pdb
 D:\_Programming\RestaurantReservationSite\RRS.Infrastructure\obj\Debug\net8.0\RRS.Infrastructure.genruntimeconfig.cache
 D:\_Programming\RestaurantReservationSite\RRS.Infrastructure\obj\Debug\net8.0\ref\RRS.Infrastructure.dll
+D:\_Programming\RestaurantReservationSite\RRS.Infrastructure\obj\Debug\net8.0\RRS.Infrastructure.sourcelink.json

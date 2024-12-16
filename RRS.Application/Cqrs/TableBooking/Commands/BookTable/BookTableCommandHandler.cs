@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RRS.Application.Common.Configurations;
 using RRS.Application.Common.Exceptions;
+using RRS.Application.Cqrs.Notifications.Events.ReservationCreated;
 using RRS.Application.Interfaces;
 using RRS.Core.Enums;
 using RRS.Core.Models;
@@ -12,14 +12,14 @@ namespace RRS.Application.Cqrs.TableBooking.Commands.BookTable;
 public class BookTableCommandHandler : IRequestHandler<BookTableCommand, Guid>
 {
     private readonly IAppDbContext _dbContext;
-    private readonly UserManager<AppUser> _userManager;
     private readonly IReservationAvailabilityService _reservationAvailabilityService;
+    private readonly IMediator _mediator;
 
-    public BookTableCommandHandler(IAppDbContext dbContext, UserManager<AppUser> userManager, IReservationAvailabilityService reservationAvailabilityService)
+    public BookTableCommandHandler(IAppDbContext dbContext, IReservationAvailabilityService reservationAvailabilityService, IMediator mediator)
     {
         _dbContext = dbContext;
-        _userManager = userManager;
         _reservationAvailabilityService = reservationAvailabilityService;
+        _mediator = mediator;
     }
 
     public async Task<Guid> Handle(BookTableCommand request, CancellationToken cancellationToken)
@@ -65,6 +65,16 @@ public class BookTableCommandHandler : IRequestHandler<BookTableCommand, Guid>
 
             _dbContext.Reservations.Add(reservation);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            var reservationCreatedEvent = new ReservationCreatedEvent(
+            Restaurant: reservation.Restaurant,
+            User: reservation.User,
+            ReservationDate: reservation.ReservationDate,
+            StartTime: reservation.StartTime,
+            EndTime: reservation.EndTime
+            );
+
+            await _mediator.Publish(reservationCreatedEvent, cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
             return reservation.Id;

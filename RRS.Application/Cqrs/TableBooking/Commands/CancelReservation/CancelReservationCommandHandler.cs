@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using RRS.Application.Common.Exceptions;
+using RRS.Application.Cqrs.Notifications.Events.ReservationCancelled;
 using RRS.Application.Interfaces;
 using RRS.Core.Enums;
 
@@ -9,10 +10,12 @@ namespace RRS.Application.Cqrs.TableBooking.Commands.CancelReservation;
 public class CancelReservationCommandHandler : IRequestHandler<CancelReservationCommand, Unit>
 {
     private readonly IAppDbContext _dbContext;
+    private readonly IMediator _mediator;
 
-    public CancelReservationCommandHandler(IAppDbContext dbContext)
+    public CancelReservationCommandHandler(IAppDbContext dbContext, IMediator mediator)
     {
         _dbContext = dbContext;
+        _mediator = mediator;
     }
 
     public async Task<Unit> Handle(CancelReservationCommand request, CancellationToken cancellationToken)
@@ -30,6 +33,14 @@ public class CancelReservationCommandHandler : IRequestHandler<CancelReservation
         reservation.Status = ReservationStatus.Cancelled;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+
+        var reservationCancelledEvent = new ReservationCancelledEvent(
+        reservation.Restaurant,
+        reservation.User,
+        ReservationStatus.Cancelled
+        );
+        await _mediator.Publish(reservationCancelledEvent, cancellationToken);
 
         return Unit.Value;
     }

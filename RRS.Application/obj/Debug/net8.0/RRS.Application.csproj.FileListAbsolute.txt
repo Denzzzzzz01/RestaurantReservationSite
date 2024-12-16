@@ -13,3 +13,4 @@ D:\_Programming\RestaurantReservationSite\RRS.Application\obj\Debug\net8.0\RRS.A
 D:\_Programming\RestaurantReservationSite\RRS.Application\obj\Debug\net8.0\refint\RRS.Application.dll
 D:\_Programming\RestaurantReservationSite\RRS.Application\obj\Debug\net8.0\RRS.Application.pdb
 D:\_Programming\RestaurantReservationSite\RRS.Application\obj\Debug\net8.0\ref\RRS.Application.dll
+D:\_Programming\RestaurantReservationSite\RRS.Application\obj\Debug\net8.0\RRS.Application.sourcelink.json

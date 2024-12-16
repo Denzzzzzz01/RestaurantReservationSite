@@ -29,6 +29,15 @@ public class NotificationRepository : INotificationRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Notification>> GetRetaurantNotificationsAsync(Guid restaurantId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Notifications
+            .AsNoTracking()
+            .Where(n => n.RestaurantId == restaurantId)
+            .OrderByDescending(n => n.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task MarkAsReadAsync(Guid notificationId, CancellationToken cancellationToken)
     {
         var notification = await _dbContext.Notifications.FindAsync(notificationId);
@@ -38,5 +47,19 @@ public class NotificationRepository : INotificationRepository
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
+
+    public async Task DeleteNotificationAsync(Guid notificationId, Guid userId, CancellationToken cancellationToken)
+    {
+        var notification = await _dbContext.Notifications
+            .FirstOrDefaultAsync(n => 
+            n.Id == notificationId 
+            && (n.UserId == userId || n.Restaurant.Manageres.Any(m => m.AppUserId == userId)), 
+            cancellationToken)
+            ?? throw new InvalidOperationException("Notification not found or you are not authorized to delete it.");
+
+        _dbContext.Notifications.Remove(notification);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
 }
 

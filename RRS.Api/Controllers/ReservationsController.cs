@@ -11,6 +11,7 @@ using RRS.Application.Cqrs.TableBooking.Queries.GetRestaurantReservation;
 using RRS.Application.Cqrs.TableBooking.Queries.GetUserReservations;
 using RRS.Core.Enums;
 using RRS.Core.Models;
+using System.Threading;
 
 namespace RRS.Api.Controllers;
 
@@ -26,24 +27,24 @@ public class ReservationsController : BaseController
 
     [Authorize(Roles = "RestaurantManager")]
     [HttpGet("restaurant/{restaurantId}")]
-    public async Task<IActionResult> GetRestaurantReservations(Guid restaurantId, [FromQuery] ReservationFilter filter = ReservationFilter.All)
-    {
-        var reservations = await _mediator.Send(new GetRestaurantReservationsQuery(restaurantId, filter));
+    public async Task<IActionResult> GetRestaurantReservations(Guid restaurantId, [FromQuery] ReservationFilter filter, CancellationToken cancellationToken)
+    { 
+        var reservations = await _mediator.Send(new GetRestaurantReservationsQuery(restaurantId, filter), cancellationToken);
         return Ok(reservations);
     }
 
     [Authorize]
     [HttpGet("user")]
-    public async Task<IActionResult> GetUserReservations([FromQuery] ReservationFilter filter = ReservationFilter.All)
+    public async Task<IActionResult> GetUserReservations([FromQuery] ReservationFilter filter, CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync();
-        var reservations = await _mediator.Send(new GetUserReservationsQuery(user, filter));
+        var reservations = await _mediator.Send(new GetUserReservationsQuery(user, filter), cancellationToken);
         return Ok(reservations);
     }
 
     [Authorize]
     [HttpPost("book-table")]
-    public async Task<IActionResult> BookTable([FromBody] BookTableDto dto)
+    public async Task<IActionResult> BookTable([FromBody] BookTableDto dto, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -52,30 +53,30 @@ public class ReservationsController : BaseController
         var user = await GetCurrentUserAsync();
         var command = dto.Adapt<BookTableCommand>() with { User = user };
 
-        var reservationId = await _mediator.Send(command);
+        var reservationId = await _mediator.Send(command, cancellationToken);
         return Ok(reservationId);
     }
 
     [Authorize(Roles = "RestaurantManager")]
     [HttpPost("change-status")]
-    public async Task<IActionResult> ChangeReservationStatus(Guid reservationId, ReservationStatus newStatus)
+    public async Task<IActionResult> ChangeReservationStatus(Guid reservationId, ReservationStatus newStatus, CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync();
 
         var command = new ChangeReservationStatusCommand(reservationId, newStatus, user.Id);
-        reservationId = await _mediator.Send(command);
+        reservationId = await _mediator.Send(command, cancellationToken);
 
         return Ok(reservationId);
     }
 
     [Authorize]
     [HttpPost("cancel")]
-    public async Task<IActionResult> CancelReservation(Guid reservationId)
+    public async Task<IActionResult> CancelReservation(Guid reservationId, CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync();
 
         var command = new CancelReservationCommand(reservationId, user.Id);
-        await _mediator.Send(command);
+        await _mediator.Send(command, cancellationToken);
 
         return Ok();
     }

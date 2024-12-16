@@ -10,3 +10,4 @@ D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.dll
 D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\refint\RRS.Core.dll
 D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.pdb
 D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\ref\RRS.Core.dll
+D:\_Programming\RestaurantReservationSite\RRS.Core\obj\Debug\net8.0\RRS.Core.sourcelink.json

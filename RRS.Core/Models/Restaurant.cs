@@ -10,6 +10,7 @@ public class Restaurant
     public List<RestaurantManagerData> Manageres { get; set; } = new List<RestaurantManagerData>();
     public List<Reservation> Reservations { get; set; } = new List<Reservation>();
     public List<RestaurantTable> Tables { get; set; } = new List<RestaurantTable>();
+    public List<Notification> Notifications { get; set; } = new List<Notification>();
 
     [Required]
     [StringLength(100)]
@@ -30,4 +31,5 @@ public class Restaurant
 
     [StringLength(100)]
     public string? Website { get; set; }
+
 }

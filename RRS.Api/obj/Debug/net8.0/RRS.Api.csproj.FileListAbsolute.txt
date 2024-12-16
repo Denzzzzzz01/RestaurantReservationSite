@@ -128,3 +128,4 @@ D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\Mapster.dll
 D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\Mapster.Core.dll
 D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\MediatR.dll
 D:\_Programming\RestaurantReservationSite\RRS.Api\bin\Debug\net8.0\MediatR.Contracts.dll
+D:\_Programming\RestaurantReservationSite\RRS.Api\obj\Debug\net8.0\RRS.Api.sourcelink.json

@@ -217,6 +217,44 @@ namespace RRS.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("RRS.Core.Models.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid?>("RelatedEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("RelatedEntityName")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("RestaurantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("RRS.Core.Models.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -393,6 +431,23 @@ namespace RRS.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RRS.Core.Models.Notification", b =>
+                {
+                    b.HasOne("RRS.Core.Models.Restaurant", "Restaurant")
+                        .WithMany("Notifications")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("RRS.Core.Models.AppUser", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Restaurant");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RRS.Core.Models.Reservation", b =>
                 {
                     b.HasOne("RRS.Core.Models.Restaurant", "Restaurant")
@@ -496,6 +551,8 @@ namespace RRS.Infrastructure.Migrations
 
             modelBuilder.Entity("RRS.Core.Models.AppUser", b =>
                 {
+                    b.Navigation("Notifications");
+
                     b.Navigation("Reservations");
 
                     b.Navigation("RestaurantManagerData");
@@ -504,6 +561,8 @@ namespace RRS.Infrastructure.Migrations
             modelBuilder.Entity("RRS.Core.Models.Restaurant", b =>
                 {
                     b.Navigation("Manageres");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Reservations");
 
