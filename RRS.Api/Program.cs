@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RRS.Api.Extensions;
+using RRS.Api.Interfaces;
+using RRS.Api.Services;
 using RRS.Application.Common.Mapping;
 using RRS.Application.Interfaces;
 using RRS.Application.Services;
@@ -101,11 +104,18 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     Assembly.GetExecutingAssembly(),
     Assembly.Load("RRS.Application") 
 ));
+
 MappingConfig.Configure();
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 5 * 1024 * 1024; 
+});
+
 builder.Services.AddScoped<ITokenService, TokenSerive>();
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 builder.Services.AddScoped<IReservationAvailabilityService, ReservationAvailabilityService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 builder.Services.AddScoped<DataInitializer>();
 var app = builder.Build();

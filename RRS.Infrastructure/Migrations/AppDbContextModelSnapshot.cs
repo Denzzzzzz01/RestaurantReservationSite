@@ -311,6 +311,10 @@ namespace RRS.Infrastructure.Migrations
                     b.Property<TimeSpan>("ClosingHour")
                         .HasColumnType("interval");
 
+                    b.Property<string>("LogoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)

@@ -18,6 +18,7 @@ public class Restaurant
 
     [Required]
     public Address Address { get; set; }
+    public string LogoUrl { get; set; }
 
     [Required]
     public TimeSpan OpeningHour { get; set; } = TimeSpan.FromHours(0);

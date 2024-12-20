@@ -7,7 +7,7 @@ public class RestaurantSummaryDto
     public Guid Id { get; set; }
     public string Name { get; set; }
     public Address Address { get; set; }
+    public string LogoUrl { get; set; }
     public TimeSpan OpeningHour { get; set; }
     public TimeSpan ClosingHour { get; set; }
-    
 }

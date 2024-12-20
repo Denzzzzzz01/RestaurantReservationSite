@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RRS.Api.Interfaces;
 using RRS.Application.Contracts.Common;
 using RRS.Application.Contracts.Restaurant;
 using RRS.Application.Cqrs.Restaurant.Commands.AddRestaurant;
@@ -10,6 +11,7 @@ using RRS.Application.Cqrs.Restaurant.Commands.UpdateRestaurant;
 using RRS.Application.Cqrs.Restaurant.Queries.GetRestaurantDetailsQuery;
 using RRS.Application.Cqrs.Restaurant.Queries.GetRestaurants;
 using RRS.Application.Cqrs.Restaurant.Queries.SearchRestaurants;
+using RRS.Application.Cqrs.Restaurants.Commands.UploadRestaurantLogo;
 using RRS.Core.Models;
 
 namespace RRS.Api.Controllers;
@@ -17,9 +19,11 @@ namespace RRS.Api.Controllers;
 public class RestaurantsController : BaseController
 {
     private readonly IMediator _mediator;
-    public RestaurantsController(UserManager<AppUser> userManager, IMediator mediator) : base(userManager)
+    private readonly IFileStorageService _fileStorageService;
+    public RestaurantsController(UserManager<AppUser> userManager, IMediator mediator, IFileStorageService fileStorageService) : base(userManager)
     {
         _mediator = mediator;
+        _fileStorageService = fileStorageService;
     }
 
     [Authorize]
@@ -122,6 +126,34 @@ public class RestaurantsController : BaseController
 
         return Ok(restaurants);
     }
+
+    [HttpPost("upload-logo/{restaurantId}")]
+    public async Task<IActionResult> UploadLogo(Guid restaurantId, IFormFile file, CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (!file.ContentType.StartsWith("image/"))
+                throw new InvalidOperationException("Invalid file type.");
+
+            var logoUrl = await _fileStorageService.SaveFileAsync(restaurantId, file, "restaurants", cancellationToken);
+            await _mediator.Send(new UpdateRestaurantLogoCommand(restaurantId, logoUrl), cancellationToken);
+
+            return Ok(new { logoUrl });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
 }
 
 

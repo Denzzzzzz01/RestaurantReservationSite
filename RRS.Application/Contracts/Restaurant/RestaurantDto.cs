@@ -9,7 +9,7 @@ public class RestaurantDto
     public List<RestaurantManagerDataDto> Manageres { get; set; }
     public string Name { get; set; }
     public Address Address { get; set; }
-    //public int SeatingCapacity { get; set; }
+    public string LogoUrl { get; set; }
     public TimeSpan OpeningHour { get; set; }
     public TimeSpan ClosingHour { get; set; }
     public string? PhoneNumber { get; set; }
