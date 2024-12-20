@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using RRS.Application.Contracts.Notification;
 using RRS.Application.Interfaces;
-using RRS.Core.Enums;
 
 namespace RRS.Application.Cqrs.Notifications.Queries.GetUserRestaurants;
 

@@ -25,11 +25,8 @@ public class AcceptRestaurantManagerInvitationCommandHandler : IRequestHandler<A
             .FirstOrDefaultAsync(n => n.Id == request.NotificationId && n.UserId == request.User.Id, cancellationToken)
             ?? throw new InvalidOperationException("Invitation not found.");
 
-        if (!notification.RestaurantId.HasValue)
-            throw new InvalidOperationException("The invitation does not contain a valid restaurant reference.");
-
         var restaurant = await _dbContext.Restaurants
-            .FirstOrDefaultAsync(r => r.Id == notification.RestaurantId, cancellationToken)
+            .FirstOrDefaultAsync(r => r.Id == notification.RelatedEntityId, cancellationToken)
             ?? throw new InvalidOperationException("Restaurant not found.");
 
         var isManager = await _dbContext.RestaurantManagerDatas

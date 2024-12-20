@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RRS.Application.Contracts.Notification;
+using RRS.Application.Cqrs.Notifications.Commands.AcceptRestaurantManagerInvitation;
 using RRS.Application.Cqrs.Notifications.Commands.DeleteNotification;
+using RRS.Application.Cqrs.Notifications.Commands.SendRestaurantManagerInvitation;
 using RRS.Application.Cqrs.Notifications.Queries.GetRestaurantNotifications;
 using RRS.Application.Cqrs.Notifications.Queries.GetUserRestaurants;
 using RRS.Core.Models;
@@ -50,4 +52,33 @@ public class NotificationController : BaseController
         return NoContent();
     }
 
+    
+    [HttpPost("send-invitation")]
+    [Authorize(Roles = "RestaurantManager")]
+    public async Task<ActionResult<Guid>> SendManagerInvitation([FromBody] RestaurantManagerInvitationDto dto, CancellationToken cancellationToken)
+    {
+        var currentUser = await GetCurrentUserAsync();
+
+        var notificationId = await _mediator.Send(new SendRestaurantManagerInvitationCommand(
+            dto.RestaurantId,
+            currentUser,
+            dto.RecipientId),
+            cancellationToken);
+
+        return Ok(notificationId);
+    }
+
+    [HttpPost("accept-invitation")]
+    [Authorize]
+    public async Task<IActionResult> AcceptManagerInvitation([FromBody] Guid NotificationId, CancellationToken cancellationToken)
+    {
+        var currentUser = await GetCurrentUserAsync();
+
+        await _mediator.Send(new AcceptRestaurantManagerInvitationCommand(
+            NotificationId,
+            currentUser),
+            cancellationToken);
+
+        return Ok("Invitation accepted successfully.");
+    }
 }

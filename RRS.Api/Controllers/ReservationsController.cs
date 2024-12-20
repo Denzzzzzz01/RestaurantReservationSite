@@ -11,10 +11,8 @@ using RRS.Application.Cqrs.TableBooking.Queries.GetRestaurantReservation;
 using RRS.Application.Cqrs.TableBooking.Queries.GetUserReservations;
 using RRS.Core.Enums;
 using RRS.Core.Models;
-using System.Threading;
 
 namespace RRS.Api.Controllers;
-
 
 public class ReservationsController : BaseController
 {

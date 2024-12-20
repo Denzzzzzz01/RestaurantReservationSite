@@ -243,6 +243,9 @@ namespace RRS.Infrastructure.Migrations
                     b.Property<Guid?>("RestaurantId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 

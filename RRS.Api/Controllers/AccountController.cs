@@ -27,7 +27,7 @@ public class AccountController : BaseController
     }
 
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, CancellationToken ct)
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto, CancellationToken cancellationToken)
     {
         try
         {
@@ -87,12 +87,12 @@ public class AccountController : BaseController
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login(LoginDto loginDto, CancellationToken ct)
+    public async Task<IActionResult> Login(LoginDto loginDto, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == loginDto.Email.ToLower());
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == loginDto.Email.ToLower(), cancellationToken);
         if (user is null)
             return Unauthorized("Invalid Email!");
 
@@ -176,13 +176,13 @@ public class AccountController : BaseController
 
     [HttpGet("restaurant")]
     [Authorize(Roles = "RestaurantManager")]
-    public async Task<IActionResult> GetUserRestaurant()
+    public async Task<IActionResult> GetUserRestaurant(CancellationToken cancellationToken)
     {
         var userEmail = User.FindFirstValue(ClaimTypes.Email);
         var appUser = await _userManager.Users
             .Include(u => u.RestaurantManagerData)
             .ThenInclude(rmd => rmd.Restaurant) 
-            .FirstOrDefaultAsync(u => u.Email == userEmail);
+            .FirstOrDefaultAsync(u => u.Email == userEmail, cancellationToken);
 
         if (appUser is null)
             throw new UnauthorizedAccessException("User not found");

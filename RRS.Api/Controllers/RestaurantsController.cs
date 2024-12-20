@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RRS.Application.Contracts.Common;
 using RRS.Application.Contracts.Restaurant;
 using RRS.Application.Cqrs.Restaurant.Commands.AddRestaurant;
 using RRS.Application.Cqrs.Restaurant.Commands.DeleteRestaurant;
@@ -23,14 +24,9 @@ public class RestaurantsController : BaseController
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> AddRestaurant([FromBody] AddRestaurantDto dto)
+    public async Task<IActionResult> AddRestaurant([FromBody] AddRestaurantDto dto, CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync();
-
-        if (user is null)
-        {
-            return Unauthorized("User is not authenticated.");
-        }
 
         var command = new AddRestaurantCommand(
             user,
@@ -42,21 +38,16 @@ public class RestaurantsController : BaseController
             dto.Website
         );
 
-        var addedRestaurantId = await _mediator.Send(command);
+        var addedRestaurantId = await _mediator.Send(command, cancellationToken);
 
         return Ok(addedRestaurantId);
     }
 
     [Authorize(Roles = "RestaurantManager")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateRestaurant(Guid id, [FromBody] UpdateRestaurantDto dto)
+    public async Task<IActionResult> UpdateRestaurant(Guid id, [FromBody] UpdateRestaurantDto dto, CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync();
-
-        if (user is null)
-        {
-            return Unauthorized("User is not authenticated.");
-        }
 
         var command = new UpdateRestaurantCommand(
             user,
@@ -69,30 +60,25 @@ public class RestaurantsController : BaseController
             dto.Website
         );
 
-        var updatedRestaurantId = await _mediator.Send(command);
+        var updatedRestaurantId = await _mediator.Send(command, cancellationToken);
 
         return Ok(updatedRestaurantId);
     }
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteRestaurant(Guid id)
+    public async Task<IActionResult> DeleteRestaurant(Guid id, CancellationToken cancellationToken)
     {
         var user = await GetCurrentUserAsync();
 
-        if (user is null)
-        {
-            return Unauthorized("User is not authenticated.");
-        }
-
         var command = new DeleteRestaurantCommand(id, user);
-        var deletedRestaurantId = await _mediator.Send(command);
+        var deletedRestaurantId = await _mediator.Send(command, cancellationToken);
 
         return Ok(deletedRestaurantId);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllRestaurants(int pageNumber = 1, int pageSize = 10)
+    public async Task<ActionResult<PagedResult<RestaurantSummaryDto>>> GetAllRestaurants(int pageNumber = 1, int pageSize = 10)
     {
         var query = new GetRestaurantsQuery(pageNumber, pageSize);
         var result = await _mediator.Send(query);
@@ -106,7 +92,7 @@ public class RestaurantsController : BaseController
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetRestaurant(Guid id)
+    public async Task<ActionResult<RestaurantDto>> GetRestaurant(Guid id, CancellationToken cancellationToken)
     {
         if (id == Guid.Empty)
         {
@@ -114,7 +100,7 @@ public class RestaurantsController : BaseController
         }
 
         var query = new GetRestaurantDetailsQuery(id);
-        var restaurant = await _mediator.Send(query);
+        var restaurant = await _mediator.Send(query, cancellationToken);
 
         if (restaurant is null)
         {
@@ -125,7 +111,7 @@ public class RestaurantsController : BaseController
     }
 
     [HttpGet("search")]
-    public async Task<IActionResult> SearchRestaurants([FromQuery] SearchRestaurantsDto searchDto, int pageNumber = 1, int pageSize = 10)
+    public async Task<ActionResult<PagedResult<RestaurantSummaryDto>>> SearchRestaurants([FromQuery] SearchRestaurantsDto searchDto, int pageNumber = 1, int pageSize = 10)
     {
         var query = new SearchRestaurantsQuery(searchDto, pageNumber, pageSize);
         var restaurants = await _mediator.Send(query);

@@ -6,7 +6,7 @@ using RRS.Core.Models;
 
 namespace RRS.Application.Cqrs.Notifications.Commands.SendRestaurantManagerInvitation;
 
-public class SendRestaurantManagerInvitationCommandHandler : IRequestHandler<SendRestaurantManagerInvitationCommand, Unit>
+public class SendRestaurantManagerInvitationCommandHandler : IRequestHandler<SendRestaurantManagerInvitationCommand, Guid>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly IAppDbContext _dbContext;
@@ -19,7 +19,7 @@ public class SendRestaurantManagerInvitationCommandHandler : IRequestHandler<Sen
         _dbContext = dbContext;
     }
 
-    public async Task<Unit> Handle(SendRestaurantManagerInvitationCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(SendRestaurantManagerInvitationCommand request, CancellationToken cancellationToken)
     {
         var restaurant = await _dbContext.Restaurants
             .FirstOrDefaultAsync(r => r.Id == request.RestaurantId, cancellationToken)
@@ -28,7 +28,7 @@ public class SendRestaurantManagerInvitationCommandHandler : IRequestHandler<Sen
         var notification = new Notification
         {
             Id = Guid.NewGuid(),
-            UserId = request.Recipient.Id,
+            UserId = request.RecipientId,
             RelatedEntityId = restaurant.Id,
             RelatedEntityName = restaurant.Name,
             Message = $"{request.Sender.UserName} invites you to become a manager of {restaurant.Name}.",
@@ -38,6 +38,6 @@ public class SendRestaurantManagerInvitationCommandHandler : IRequestHandler<Sen
         };
 
         await _notificationRepository.AddNotificationAsync(notification, cancellationToken);
-        return Unit.Value;
+        return notification.Id;
     }
 }
