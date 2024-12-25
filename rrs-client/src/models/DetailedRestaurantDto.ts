@@ -5,6 +5,7 @@ export interface DetailedRestaurantDto {
     id: string;
     name: string;
     address: Address;
+    logoUrl: string;
     openingHour: string;
     closingHour: string;
     phoneNumber: string;

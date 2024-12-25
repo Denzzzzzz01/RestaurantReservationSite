@@ -30,6 +30,8 @@ public class AddRestaurantCommandHandler : IRequestHandler<AddRestaurantCommand,
                     throw new InvalidOperationException("User is already a manager of another restaurant.");
 
                 var restaurant = request.Adapt<Restaurant>();
+                restaurant.LogoUrl = "uploads/restaurants/_defaultrestaurantlogo.png";
+
                 var restaurantManager = new RestaurantManagerData
                 {
                     Id = Guid.NewGuid(),

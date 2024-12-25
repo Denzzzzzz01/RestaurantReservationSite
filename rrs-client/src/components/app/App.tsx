@@ -6,17 +6,6 @@ import Navbar from '../navbar/Navbar'
 import { setupAxiosInterceptors } from '../../utils/axiosInterceptors'
 
 function App() {
-  // const { refreshToken } = useAuth();
-
-  // useEffect(() => {
-  //   const updateToken = async () => {
-  //     await refreshToken();
-  //   };
-
-  //   updateToken();
-  // }, [refreshToken]);
-
-
   setupAxiosInterceptors();
 
   return (

@@ -62,6 +62,8 @@ const HomePage: React.FC = () => {
         setTotalCount(data.totalCount);
         setTotalPages(data.totalPages);
         setPageNumber(1);
+
+        console.log(data.items);
       } catch (err) {
         setError("Failed to search restaurants.");
       } finally {
@@ -94,7 +96,8 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <h1>Restaurants List</h1>
+      <h1><i className="fi fi-ss-user"></i>Restaurants List</h1>
+      
 
       <div>
         <label htmlFor="search">Search Restaurants: </label>
@@ -131,21 +134,35 @@ const HomePage: React.FC = () => {
         <ul>
           {restaurants.map((restaurant) => (
             <li key={restaurant.id}>
-              <h2>{restaurant.name}</h2>
-              <p>
-                {restaurant.address.street}, {restaurant.address.city},{" "}
-                {restaurant.address.country}
-              </p>
-              <p>
-                Opening Hours: {restaurant.openingHour} -{" "}
-                {restaurant.closingHour}
-              </p>
-              <button
-                className="btn-book"
-                onClick={() => openModal(restaurant.id)}
-              >
-                Book a Table
-              </button>
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                <img
+                  src={`${restaurant.logoUrl}`}
+                  alt={`${restaurant.name} Logo`}
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "8px",
+                    objectFit: "cover",
+                    marginRight: "1rem",
+                  }}
+                />
+                <div>
+                  <h2>{restaurant.name}</h2>
+                  <p>
+                    {restaurant.address.street}, {restaurant.address.city},{" "}
+                    {restaurant.address.country}
+                  </p>
+                  <p>
+                    Opening Hours: {restaurant.openingHour} - {restaurant.closingHour}
+                  </p>
+                  <button
+                    className="btn-book"
+                    onClick={() => openModal(restaurant.id)}
+                  >
+                    Book a Table
+                  </button>
+                </div>
+              </div>
             </li>
           ))}
         </ul>

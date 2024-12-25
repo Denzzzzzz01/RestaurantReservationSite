@@ -1,1 +1,23 @@
 @import  'normalize.css';
+@import '../../styles/_variables';
+@import '@flaticon/flaticon-uicons/css/all/all.css';
+
+body {
+  background-color: $color-cream;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+  
+    &:hover,
+    &:visited,
+    &:link,
+    &:active {
+      text-decoration: none;
+      color: inherit; 
+    }
+  }
+
+
+  

@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
       element: <App />,
       children: [
         { path: "", element: <HomePage /> },
-        { path: "restaurants/:id", element: <RestaurantPage /> }, 
+        { path: "restaurants/:id", element: <ProtectedRoute><RestaurantPage /></ProtectedRoute> }, 
         { path: "reservations", element: <ProtectedRoute><UserReservationsPage /></ProtectedRoute> },
         { path: "restaurant-reservations/:restaurantId", element: <ProtectedRoute><RestaurantReservationsPage /></ProtectedRoute>},
         { path: "login", element: <LoginPage /> },
