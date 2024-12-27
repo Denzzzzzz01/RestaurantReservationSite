@@ -4,6 +4,9 @@ import { getRestaurants, searchRestaurants } from "../../services/RestaurantServ
 import BookTableForm from "../../components/bookTableForm/BookTableForm";
 import Modal from "../../components/modal/Modal";
 import { debounce } from "lodash";
+import PaginationControls from "../../components/paginationControls/PaginationControls";
+import RestaurantsList from "../../components/restaurantsList/RestaurantsList";
+import SearchBar from "../../components/searchBar/SearchBar";
 
 const HomePage: React.FC = () => {
   const [restaurants, setRestaurants] = useState<RestaurantDto[]>([]);
@@ -44,12 +47,10 @@ const HomePage: React.FC = () => {
 
   const debouncedSearch = useCallback(
     debounce(async (query: string) => {
-      if(query.length === 0)
-      {
+      if (query.length === 0) {
         setIsSearching(false);
         return;
-      }
-      else if (query.length < 3) {
+      } else if (query.length < 3) {
         return;
       }
 
@@ -62,8 +63,6 @@ const HomePage: React.FC = () => {
         setTotalCount(data.totalCount);
         setTotalPages(data.totalPages);
         setPageNumber(1);
-
-        console.log(data.items);
       } catch (err) {
         setError("Failed to search restaurants.");
       } finally {
@@ -96,20 +95,8 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <h1><i className="fi fi-ss-user"></i>Restaurants List</h1>
-      
-
-      <div>
-        <label htmlFor="search">Search Restaurants: </label>
-        <input
-          id="search"
-          type="text"
-          value={searchQuery}
-          onChange={handleSearchChange}
-          placeholder="Enter restaurant name"
-        />
-      </div>
-
+      <h1>Restaurants</h1>
+      <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
       <div>
         <label htmlFor="pageSize">Page Size: </label>
         <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
@@ -118,81 +105,25 @@ const HomePage: React.FC = () => {
           <option value={20}>20</option>
         </select>
       </div>
-
-      <p>
-        Showing {restaurants.length} of {totalCount} restaurants
-      </p>
-
-      <div>
+      <p>Showing {restaurants.length} of {totalCount} restaurants</p>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p style={{ color: "red" }}>{error}</p>
-      ) : restaurants.length === 0 ? (
-        <p>No restaurants found. Try a different search.</p>
       ) : (
-        <ul>
-          {restaurants.map((restaurant) => (
-            <li key={restaurant.id}>
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                <img
-                  src={`${restaurant.logoUrl}`}
-                  alt={`${restaurant.name} Logo`}
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    borderRadius: "8px",
-                    objectFit: "cover",
-                    marginRight: "1rem",
-                  }}
-                />
-                <div>
-                  <h2>{restaurant.name}</h2>
-                  <p>
-                    {restaurant.address.street}, {restaurant.address.city},{" "}
-                    {restaurant.address.country}
-                  </p>
-                  <p>
-                    Opening Hours: {restaurant.openingHour} - {restaurant.closingHour}
-                  </p>
-                  <button
-                    className="btn-book"
-                    onClick={() => openModal(restaurant.id)}
-                  >
-                    Book a Table
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <RestaurantsList restaurants={restaurants} onBookTable={openModal} />
       )}
-    </div>
-
       {!isSearching && (
-        <div>
-          <button onClick={handlePreviousPage} disabled={pageNumber === 1}>
-            Previous Page
-          </button>
-          <span>
-            Page {pageNumber} of {totalPages}
-          </span>
-          <button onClick={handleNextPage} disabled={pageNumber >= totalPages}>
-            Next Page
-          </button>
-        </div>
+        <PaginationControls
+          pageNumber={pageNumber}
+          totalPages={totalPages}
+          onNext={handleNextPage}
+          onPrevious={handlePreviousPage}
+        />
       )}
-
-      <Modal
-        isOpen={!!selectedRestaurantId}
-        onClose={closeModal}
-        title="Book a Table"
-      >
+      <Modal isOpen={!!selectedRestaurantId} onClose={closeModal} title="Book a Table">
         {selectedRestaurantId && (
-          <BookTableForm
-            restaurantId={selectedRestaurantId}
-            onClose={closeModal}
-          />
+          <BookTableForm restaurantId={selectedRestaurantId} onClose={closeModal} />
         )}
       </Modal>
     </div>

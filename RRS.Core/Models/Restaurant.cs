@@ -14,7 +14,9 @@ public class Restaurant
 
     [Required]
     [StringLength(100)]
-    public string Name { get; set; }  
+    public string Name { get; set; }
+    [StringLength(1000)]
+    public string Description { get; set; } = String.Empty;
 
     [Required]
     public Address Address { get; set; }

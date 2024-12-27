@@ -16,6 +16,7 @@ export const getRestaurants = async (
     params: { PageNumber: pageNumber, PageSize: pageSize },
   });
 
+  console.log(response.data);
   return response.data;
 
   } catch (error) {
@@ -27,6 +28,8 @@ export const getRestaurants = async (
 export const getRestaurantById = async (id: string): Promise<DetailedRestaurantDto> => {
   try {
     const response = await axios.get(`/api/Restaurants/${id}`);
+
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurant by ID", error);
@@ -78,5 +81,18 @@ export const searchRestaurants = async (
   } catch (error) {
     console.error("Error searching restaurants:", error);
     throw new Error("Failed to search restaurants. Please try again.");
+  }
+};
+
+export const uploadRestaurantLogo = async (restaurantId: string, formData: FormData): Promise<void> => {
+  try {
+    await axios.post(`/api/Restaurants/upload-logo/${restaurantId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  } catch (error) {
+    console.error("Error uploading logo:", error);
+    throw error;
   }
 };

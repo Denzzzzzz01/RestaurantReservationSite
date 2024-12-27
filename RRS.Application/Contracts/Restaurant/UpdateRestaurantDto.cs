@@ -9,6 +9,7 @@ public class UpdateRestaurantDto
     [Required]
     [StringLength(100)]
     public string Name { get; set; }
+    public string Description { get; set; } = String.Empty;
 
     [Required]
     public Address Address { get; set; }

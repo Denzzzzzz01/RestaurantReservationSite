@@ -7,6 +7,7 @@ public record UpdateRestaurantCommand(
     AppUser User,
     Guid Id,
     string Name,
+    string Description,
     Address Address,
     TimeSpan OpeningHour,
     TimeSpan ClosingHour,

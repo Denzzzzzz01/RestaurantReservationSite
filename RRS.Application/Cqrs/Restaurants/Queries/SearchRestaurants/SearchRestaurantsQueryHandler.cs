@@ -32,6 +32,7 @@ public class SearchRestaurantsQueryHandler : IRequestHandler<SearchRestaurantsQu
                     Id = r.Id,
                     Name = r.Name,
                     Address = r.Address,
+                    Description = r.Description,
                     LogoUrl = r.LogoUrl,
                     OpeningHour = r.OpeningHour,
                     ClosingHour = r.ClosingHour

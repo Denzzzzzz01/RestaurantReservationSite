@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { getRestaurantById, updateRestaurant } from "../../services/RestaurantService";
+import { useParams } from "react-router-dom";
+import { getRestaurantById, updateRestaurant, uploadRestaurantLogo } from "../../services/RestaurantService";
 import { DetailedRestaurantDto } from "../../models/DetailedRestaurantDto";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../../context/useAuth";
@@ -11,6 +11,9 @@ import Modal from "../../components/modal/Modal";
 import UpdateRestaurantForm from "../../components/updateRestaurantModal/updateRestaurantModal";
 import { RestaurantUpdateDto } from "../../models/RestaurantUpdateDto";
 import { notifyError, notifySuccess, toastPromise } from "../../utils/toastUtils";
+import RestaurantDetails from "../../components/restaurantDetails/RestaurantDetails";
+import RestaurantTables from "../../components/restaurantTables/RestaurantTables";
+import ManagerActions from "../../components/managerActions/ManagerActions";
 
 
 const RestaurantPage = () => {
@@ -23,6 +26,8 @@ const RestaurantPage = () => {
   const { token } = useAuth();
   const [isAddTablesModalOpen, setIsAddTablesModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
 
   useEffect(() => {
@@ -37,7 +42,7 @@ const RestaurantPage = () => {
           setTables(tablesData);
         }
       } catch (error) {
-        notifyError("Failed to fetch restaurant details or tables.");
+        console.error("Failed to fetch restaurant details or tables:", error);
         setError("Failed to fetch restaurant details or tables.");
       } finally {
         setLoading(false);
@@ -68,21 +73,6 @@ const RestaurantPage = () => {
   };
   
 
-
-  // const handleUpdateRestaurant = async (updatedData: RestaurantUpdateDto) => {
-  //   if (!id) return;
-
-  //   try {
-  //     await updateRestaurant(id, updatedData);
-  //     const updatedRestaurant = await getRestaurantById(id);
-  //     setRestaurant(updatedRestaurant);
-  //     setIsUpdateModalOpen(false);
-  //     notifySuccess("Restaurant updated successfully.");
-  //   } catch (error) {
-  //     notifyError("Failed to update restaurant.");
-  //     console.error("Error updating restaurant:", error);
-  //   }
-  // };
   const handleUpdateRestaurant = async (updatedData: RestaurantUpdateDto) => {
     if (!id) return;
   
@@ -97,6 +87,30 @@ const RestaurantPage = () => {
       "Restaurant updated successfully!",
       "Failed to update restaurant."
     );
+  };
+
+  const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setLogoFile(event.target.files[0]);
+    }
+  };
+
+  const handleLogoUpload = async () => {
+    if (!id || !logoFile) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", logoFile);
+
+      await uploadRestaurantLogo(id, formData);
+      notifySuccess("Logo updated successfully!");
+      setIsLogoModalOpen(false);
+
+      const updatedRestaurant = await getRestaurantById(id);
+      setRestaurant(updatedRestaurant);
+    } catch (error) {
+      notifyError("Failed to upload logo.");
+    }
   };
   
 
@@ -125,53 +139,16 @@ const RestaurantPage = () => {
 
   return (
     <div>
-      <h1>{restaurant.name}</h1>
-      <p>
-        Address: {restaurant.address.street}, {restaurant.address.city},{" "}
-        {restaurant.address.country}
-      </p>
-      <p>Phone: {restaurant.phoneNumber}</p>
-      <p>Website: {restaurant.website || "N/A"}</p>
-      <p>
-        Opening Hours: {restaurant.openingHour} - {restaurant.closingHour}
-      </p>
-      <h3>Managers:</h3>
-      <ul>
-        {restaurant.manageres.map((manager) => (
-          <li key={manager.appUser.id}>{manager.appUser.userName}</li>
-        ))}
-      </ul>
+      <RestaurantDetails restaurant={restaurant} />
+      <RestaurantTables tables={tables} />
       {isManager && (
-        <div style={{ marginTop: "20px" }}>
-          <Link to={`/restaurant-reservations/${restaurant.id}`} className="btn btn-primary">
-            View Reservations
-          </Link>
-        </div>
+        <ManagerActions
+          onAddTables={() => setIsAddTablesModalOpen(true)}
+          onUpdateRestaurant={() => setIsUpdateModalOpen(true)}
+          onChangeLogo={() => setIsLogoModalOpen(true)}
+        />
       )}
 
-      <h3>Tables:</h3>
-      {tables.length > 0 ? (
-        <ul>
-          {tables.map((table) => (
-            <li key={table.id}>
-              <p>Table Number: {table.tableNumber}</p>
-              <p>Capacity: {table.capacity}</p>
-              <p>Description: {table.description}</p>
-              <p>Status: {table.isAvailable ? "Available" : "Unavailable"}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No tables available.</p>
-      )}
-
-      <button onClick={() => setIsAddTablesModalOpen(true)}>Add Tables</button>
-
-      {isManager && (
-        <button onClick={() => setIsUpdateModalOpen(true)}>
-          Update Restaurant
-        </button>
-      )}
 
       <Modal
         title="Add Tables"
@@ -182,18 +159,29 @@ const RestaurantPage = () => {
       </Modal>
 
       <Modal
-            title="Update Restaurant"
-            isOpen={isUpdateModalOpen}
+        title="Update Restaurant"
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+      >
+        {restaurant && (
+          <UpdateRestaurantForm
+            initialData={restaurant}
+            onSubmit={handleUpdateRestaurant}
             onClose={() => setIsUpdateModalOpen(false)}
-          >
-            {restaurant && (
-              <UpdateRestaurantForm
-                initialData={restaurant}
-                onSubmit={handleUpdateRestaurant}
-                onClose={() => setIsUpdateModalOpen(false)}
-              />
-            )}
-          </Modal>
+          />
+        )}
+      </Modal>
+
+      <Modal
+        title="Change Logo"
+        isOpen={isLogoModalOpen}
+        onClose={() => setIsLogoModalOpen(false)}
+      >
+        <div>
+          <input type="file" accept="image/*" onChange={handleLogoChange} />
+          <button onClick={handleLogoUpload}>Upload</button>
+        </div>
+      </Modal>
     </div>
   );
 };

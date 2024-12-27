@@ -45,6 +45,18 @@ const UpdateRestaurantForm: React.FC<UpdateRestaurantFormProps> = ({
           required
         />
       </div>
+
+      <div>
+        <label htmlFor="description">Description (max 1000):</label>
+        <textarea
+          id="description"
+          name="description"
+          maxLength={1000}
+          value={formData.description}
+          onChange={handleChange}
+        />
+      </div>
+
       <div>
         <label htmlFor="street">Street:</label>
         <input

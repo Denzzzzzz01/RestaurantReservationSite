@@ -30,6 +30,7 @@ public class GetRestaurantsQueryHandler : IRequestHandler<GetRestaurantsQuery, P
             {
                 Id = r.Id,
                 Name = r.Name,
+                Description = r.Description,
                 Address = r.Address,
                 LogoUrl = r.LogoUrl,
                 OpeningHour = r.OpeningHour,

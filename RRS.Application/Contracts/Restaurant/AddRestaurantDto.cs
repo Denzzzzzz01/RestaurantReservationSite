@@ -11,6 +11,7 @@ public class AddRestaurantDto
 
     [Required]
     public Address Address { get; set; }
+    public string Description { get; set; } = String.Empty;
 
     [Required]
     public string OpeningHour { get; set; }

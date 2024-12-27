@@ -7,6 +7,7 @@ public record AddRestaurantCommand
 (
     AppUser User,
     string Name,
+    string Description,
     Address Address,
     TimeSpan OpeningHour,
     TimeSpan ClosingHour,

@@ -8,11 +8,17 @@ export const getRestaurantTables = async (restaurantId: string): Promise<TableDt
   try {
     const response = await axios.get<TableDto[]>(`${API_URL}/restaurants/${restaurantId}/tables`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+
+    if (error.response && error.response.status === 404) {
+      console.warn(`No tables found for restaurant ${restaurantId}. Returning an empty array.`);
+      return [];
+    }
     console.error("Error fetching tables:", error);
     throw new Error("Failed to fetch tables. Please try again later.");
   }
 };
+
 
 export const createTables = async (
     restaurantId: string,

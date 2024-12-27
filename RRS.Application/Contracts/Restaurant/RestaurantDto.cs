@@ -8,6 +8,7 @@ public class RestaurantDto
     public Guid Id { get; set; }
     public List<RestaurantManagerDataDto> Manageres { get; set; }
     public string Name { get; set; }
+    public string? Description { get; set; }
     public Address Address { get; set; }
     public string LogoUrl { get; set; }
     public TimeSpan OpeningHour { get; set; }

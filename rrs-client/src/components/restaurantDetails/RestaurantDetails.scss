@@ -1,0 +1,15 @@
+.restaurant-details {
+    .restaurant-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+  
+    .restaurant-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+  }
+  

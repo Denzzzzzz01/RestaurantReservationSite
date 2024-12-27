@@ -1,5 +1,6 @@
 export interface CreateRestaurantDto {
     name: string;
+    description: string;
     address: {
       street: string;
       city: string;

@@ -14,6 +14,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
   const { refreshToken } = useAuth(); 
   const [restaurant, setRestaurant] = useState<Omit<CreateRestaurantDto, "id">>({
     name: "",
+    description: "",
     address: {
       street: "",
       city: "",
@@ -82,6 +83,16 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             required
           />
         </div>
+
+        <div>
+        <label>Description (max 1000):</label>
+        <textarea
+          value={restaurant.description}
+          maxLength={1000}
+          onChange={(e) => handleChange("description", e.target.value)}
+          />
+      </div>
+
         <div className="mb-2">
           <label className="block">Street</label>
           <input

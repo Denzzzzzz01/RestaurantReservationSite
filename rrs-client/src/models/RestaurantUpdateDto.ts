@@ -2,6 +2,7 @@ import { Address } from "./Address";
 
 export interface RestaurantUpdateDto {
     name: string;
+    description: string;
     address: Address;
     openingHour: string;
     closingHour: string;

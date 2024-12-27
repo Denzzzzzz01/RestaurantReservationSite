@@ -35,6 +35,7 @@ public class RestaurantsController : BaseController
         var command = new AddRestaurantCommand(
             user,
             dto.Name,
+            dto.Description,
             dto.Address,
             TimeSpan.Parse(dto.OpeningHour),
             TimeSpan.Parse(dto.ClosingHour),
@@ -57,6 +58,7 @@ public class RestaurantsController : BaseController
             user,
             id,
             dto.Name,
+            dto.Description,
             dto.Address,
             TimeSpan.Parse(dto.OpeningHour),
             TimeSpan.Parse(dto.ClosingHour),
