@@ -9,10 +9,10 @@ function App() {
   setupAxiosInterceptors();
 
   return (
-    <div className="">
+    <div className="app-container">
       <UserProvider>
         <Navbar />
-        <div className="">
+        <div className="main-content">
           <Outlet />
         </div>
         <ToastContainer />

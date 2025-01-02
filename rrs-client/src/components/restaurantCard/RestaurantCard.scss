@@ -1,0 +1,112 @@
+@import '../../styles/_variables';
+
+.restaurant-card {
+  list-style: none;
+  margin-bottom: 5rem;
+  padding: 0;
+  background-color: $color-white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  flex-direction: column;
+  
+  width: 80%; 
+  min-height: 15%;
+
+
+  .restaurant-card-container {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between; 
+    height: 100%;
+  
+    .restaurant-card-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; 
+      padding: 0 1rem;
+      min-height: 100%;
+  
+      .restaurant-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: $color-brown;
+        text-decoration: none;
+        margin-bottom: 0.5rem; 
+        margin-top: 1rem;
+  
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+  
+      .restaurant-description {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+        color: $color-text-secondary;
+        line-height: 1.5;
+        flex-grow: 1; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+  
+        .toggle-description {
+          font-size: 0.9rem;
+          color: $color-brown;
+          cursor: pointer;
+  
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+  
+      .restaurant-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-left: 1rem;//0.1rem 0.5rem;
+        background-color: $color-cream;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: auto; 
+        margin-bottom: 1rem;
+        border-radius: 4px;
+  
+        .restaurant-address {
+          margin: 0;
+          font-size: 0.9rem;
+          color: $color-text-primary;
+        }
+  
+        .restaurant-hours {
+          font-size: 0.9rem;
+          color: $color-text-primary;
+        }
+  
+        .btn-book {
+          padding: 0.5rem 1rem;
+          font-size: 1rem;
+          color: $color-cream;
+          background-color: $color-brown;
+          border: none;
+          border-radius: 4px;
+  
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+  
+          &:hover {
+            background-color: lighten($color-brown, 10%);
+          }
+        }
+      }
+    }
+  
+    .restaurant-logo {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      margin: 0;
+    }
+  }
+  
+}

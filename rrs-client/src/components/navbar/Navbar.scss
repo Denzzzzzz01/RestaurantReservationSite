@@ -4,13 +4,22 @@
 
 
 .navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+  height: 5rem;
+
   background-color: $color-brown;
   padding: 10px 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-
+  
+  width: 100%;
+  box-sizing: border-box; 
 
     i {
       font-style: 'Flaticon-Uicons' !important;
@@ -37,7 +46,7 @@
       text-decoration: none;
 
       &:hover {
-        //color: lighten($color-white, 10%);
+        color: lighten($color-white, 10%);
       }
     }
   }

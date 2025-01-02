@@ -7,6 +7,7 @@ import { debounce } from "lodash";
 import PaginationControls from "../../components/paginationControls/PaginationControls";
 import RestaurantsList from "../../components/restaurantsList/RestaurantsList";
 import SearchBar from "../../components/searchBar/SearchBar";
+import './HomePage.scss';
 
 const HomePage: React.FC = () => {
   const [restaurants, setRestaurants] = useState<RestaurantDto[]>([]);
@@ -94,40 +95,62 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Restaurants</h1>
-      <SearchBar searchQuery={searchQuery} onSearchChange={handleSearchChange} />
-      <div>
-        <label htmlFor="pageSize">Page Size: </label>
-        <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
-          <option value={2}>2</option>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-        </select>
+    <div className="homepage">
+      <div className="homepage-container">
+        <div className="header-section">
+          <div className="header-controls">
+          <SearchBar
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Enter restaurant name or address"
+            height="3rem"
+            fontSize="1.5rem"
+          />
+          <div className="page-size-container">
+            <label htmlFor="pageSize">Show: </label>
+            <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
+              <option value={2}>2</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <p>Showing {restaurants.length} of {totalCount} restaurants</p>
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p style={{ color: "red" }}>{error}</p>
-      ) : (
-        <RestaurantsList restaurants={restaurants} onBookTable={openModal} />
-      )}
-      {!isSearching && (
-        <PaginationControls
-          pageNumber={pageNumber}
-          totalPages={totalPages}
-          onNext={handleNextPage}
-          onPrevious={handlePreviousPage}
-        />
-      )}
-      <Modal isOpen={!!selectedRestaurantId} onClose={closeModal} title="Book a Table">
-        {selectedRestaurantId && (
-          <BookTableForm restaurantId={selectedRestaurantId} onClose={closeModal} />
+        
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p style={{ color: "red" }}>{error}</p>
+        ) : (
+          <RestaurantsList restaurants={restaurants} onBookTable={openModal} />
         )}
-      </Modal>
+
+        {!isSearching && (
+          <div className="pagination-controls">
+          <p className="restaurants-info">
+            Showing {restaurants.length} of {totalCount} restaurants
+          </p>
+
+            <PaginationControls
+              pageNumber={pageNumber}
+              totalPages={totalPages}
+              onNext={handleNextPage}
+              onPrevious={handlePreviousPage}
+            />
+          </div>
+        )}
+
+        <div className="modal-container">
+          <Modal isOpen={!!selectedRestaurantId} onClose={closeModal} title="Book a Table">
+            {selectedRestaurantId && (
+              <BookTableForm restaurantId={selectedRestaurantId} onClose={closeModal} />
+            )}
+          </Modal>
+        </div>
+      </div>
     </div>
   );
+  
 };
 
 export default HomePage;

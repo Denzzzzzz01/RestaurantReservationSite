@@ -1,5 +1,8 @@
 $color-white: #f1f0ee;
-$color-cream: #e2d9c8;
+
+$color-cream: #e2d9c8; //#e4ccb2;// 
+$color-light-cream: #f7e3ca;
+
 $color-dark-cream: #d6c8b0;
 $color-brown: #30261c;
 $color-dark-gray: #1e1e1e;
@@ -10,6 +13,8 @@ $color-brown-transparent: rgba(48, 38, 28, 0.7);
 $color-text-primary: $color-brown;
 $color-text-secondary: #6d6d6d;
 
+$color-gray: #1e1e1e; 
+$color-light-gray: #d4d4d4;
 
 @mixin button($bg-color, $text-color) {
     background-color: $bg-color;
