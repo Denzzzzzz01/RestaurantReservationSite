@@ -46,6 +46,10 @@ const HomePage: React.FC = () => {
     }
   }, [pageNumber, pageSize, isSearching]);
 
+  useEffect(() => {
+    document.body.style.overflow = selectedRestaurantId ? 'hidden' : 'auto';
+  }, [selectedRestaurantId]);
+
   const debouncedSearch = useCallback(
     debounce(async (query: string) => {
       if (query.length === 0) {
@@ -81,6 +85,9 @@ const HomePage: React.FC = () => {
 
   const handleNextPage = () => setPageNumber((prev) => prev + 1);
   const handlePreviousPage = () => setPageNumber((prev) => Math.max(prev - 1, 1));
+  const handlePageSelect = (page: number) => {
+    setPageNumber(page);
+  };
   const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPageSize(Number(event.target.value));
     setPageNumber(1);
@@ -99,23 +106,23 @@ const HomePage: React.FC = () => {
       <div className="homepage-container">
         <div className="header-section">
           <div className="header-controls">
-          <SearchBar
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Enter restaurant name or address"
-            height="3rem"
-            fontSize="1.5rem"
-          />
-          <div className="page-size-container">
-            <label htmlFor="pageSize">Show: </label>
-            <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
-              <option value={2}>2</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-            </select>
+            <SearchBar
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Enter restaurant name or address"
+              height="3rem"
+              fontSize="1.5rem"
+            />
+            <div className="page-size-container">
+              <label htmlFor="pageSize">Show: </label>
+              <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
+                <option value={2}>2</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
         
         {loading ? (
           <p>Loading...</p>
@@ -126,16 +133,17 @@ const HomePage: React.FC = () => {
         )}
 
         {!isSearching && (
-          <div className="pagination-controls">
-          <p className="restaurants-info">
-            Showing {restaurants.length} of {totalCount} restaurants
-          </p>
+          <div className="footer-section">
+            <p className="restaurants-info">
+              Showing {restaurants.length} of {totalCount} restaurants
+            </p>
 
             <PaginationControls
               pageNumber={pageNumber}
               totalPages={totalPages}
               onNext={handleNextPage}
               onPrevious={handlePreviousPage}
+              onPageSelect={handlePageSelect}
             />
           </div>
         )}

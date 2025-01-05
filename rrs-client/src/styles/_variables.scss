@@ -1,6 +1,6 @@
 $color-white: #f1f0ee;
 
-$color-cream: #e2d9c8; //#e4ccb2;// 
+$color-cream: #e2d9c8; 
 $color-light-cream: #f7e3ca;
 
 $color-dark-cream: #d6c8b0;
@@ -28,12 +28,6 @@ $color-light-gray: #d4d4d4;
     &:hover {
     background-color: darken($bg-color, 10%);
     }
-}
-
-@mixin center-flex {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 @mixin box-shadow($color: rgba(0, 0, 0, 0.1)) {

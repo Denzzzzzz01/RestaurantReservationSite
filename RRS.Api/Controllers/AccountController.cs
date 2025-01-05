@@ -34,6 +34,10 @@ public class AccountController : BaseController
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            if (registerDto.Password != registerDto.ConfirmPassword)
+                return BadRequest("Password and Confirm Password do not match.");
+           
+
             //var cacheKey = $"User_{registerDto.Email}";
             //var existingUser = await _cache.GetAsync<AppUser>(cacheKey);
             //if (existingUser != null)

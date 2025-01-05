@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from 'react-hook-form';
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
+import './LoginPage.scss';
 
 type Props = {};
 
@@ -25,53 +26,49 @@ const LoginPage = (props: Props) => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center w-full h-full rounded-b-lg max-w-md">
-      <div className="rounded-lg shadow-lg max-w-md w-full bg-black bg-opacity-25">
-
-        <div className="bg-white pt-8 pl-8 pr-8 pb-4 rounded-t-lg rounded-r-lg shadow-lg max-w-md w-full">
-          <h1 className="text-2xl font-bold mb-6 text-center">Sign in to your account</h1>
-          <form onSubmit={handleSubmit(handleLogin)} className="">
-            <div className="mt-4">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="text"
-                id="email"
-                placeholder="Email"
-                {...register("email")}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-beige focus:border-beige sm:text-sm"
-              />
-              {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
-            </div>
-            <div className="mt-4 ">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-              <input
-                type="password"
-                id="password"
-                placeholder="••••••••"
-                {...register("password")}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-beige focus:border-beige sm:text-sm"
-              />
-              {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
-            </div>
-            <button 
-              type="submit" 
-              className="w-full flex justify-center mt-10 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-beige hover:bg-beige-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-beige-light ">
-                Sign in
-            </button>
-          </form>
+    <section className="login-page">
+      <div className="login-container">
+        <div className="login-header">
+          <div className="header-image">
+            <img src="/images/enter.png" alt="Enter" />
+          </div>
+          <h1>Sign in to your account</h1>
         </div>
 
-        <div className=' max-w-md w-full rounded-b-lg flex items-center justify-around'>
-          <Link to="/login" className="w-full rounded-b-lg p-3 text-center bg-white ">
-            SignIn
-          </Link>
-          <Link to="/register" className="w-full p-3 text-center rounded-b-lg bg-black bg-opacity-0 hover:bg-opacity-20 text-gray-300 ">
-            SignUp
-          </Link>
+        <form className="login-form" onSubmit={handleSubmit(handleLogin)}>
+          <div className="form-group">
+            <i className="fi fi-rr-envelope input-icon"></i>
+            <input
+              type="text"
+              id="email"
+              placeholder="Email"
+              {...register("email")}
+            />
+            {errors.email && <p className="error-message">{errors.email.message}</p>}
+          </div>
+
+          <div className="form-group">
+            <i className="fi fi-rr-lock input-icon"></i>
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              {...register("password")}
+            />
+            {errors.password && <p className="error-message">{errors.password.message}</p>}
+          </div>
+
+          <button type="submit" className="login-button">Sign In</button>
+        </form>
+
+        <div className="register-link">
+          <p>
+            Don't have an account? <a href="/register">Register</a>
+          </p>
         </div>
-      
       </div>
     </section>
+
   );
 }
 

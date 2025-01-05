@@ -33,33 +33,33 @@
 
         
         .page-size-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            
+          flex: 1;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
 
-            label {
-              color: $color-text-primary;
-              font-size: 1.2rem;
-            }
-          
-            select {
-              font-size: 1.2rem;
-              padding: 0.5rem;
-              border: 1px solid $color-light-gray;
-              border-radius: 4px;
-              background-color: $color-white;
-              color: $color-text-primary;
-              cursor: pointer;
-              outline: none;
-          
-              &:hover {
-                border-color: $color-gray;
-              }
+          label {
+            color: $color-text-primary;
+            font-size: 1.4rem;
+          }
+        
+          select {
+            font-size: 1.4rem;
+            padding: 0.5rem;
+            border: 1px solid $color-light-gray;
+            border-radius: 4px;
+            background-color: $color-white;
+            color: $color-text-primary;
+            cursor: pointer;
+            outline: none;
+        
+            &:hover {
+              border-color: $color-gray;
             }
           }
-      }
+        }
+    }
 
     .homepage-container {
         background-color: $color-white;
@@ -67,10 +67,11 @@
         width: 60%; 
         min-height: 100vh; 
 
-        padding: 2rem 0;
+        padding-top: 2rem;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: space-between;
         gap: 1.5rem; 
     }
 
@@ -128,12 +129,32 @@
     .restaurants-list-container {
         width: 100%;
     }
-
-    .pagination-controls {
-        margin-top: 2rem;
+ 
+    .footer-section {
+        margin: 0; 
+        padding-top: 1rem;
+        padding-bottom: 3rem;
+        width: 100%;
+        background-color: $color-light-cream;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0; 
     }
 
     .modal-container {
-        margin-top: 2rem;
-    }
+      position: fixed; 
+      top: 0;
+      left: 0;
+      width: 100vw; 
+      height: 100vh; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000; 
+      pointer-events: none; 
+  }
+  
+  .modal-container .modal {
+      pointer-events: auto;
+  }
+  
 }

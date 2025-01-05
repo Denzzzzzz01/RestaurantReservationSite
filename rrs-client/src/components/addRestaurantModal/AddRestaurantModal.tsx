@@ -73,13 +73,13 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
   return (
     <Modal title="Add Restaurant" isOpen={isOpen} onClose={onClose}>
       <form onSubmit={handleSubmit}>
-        <div className="mb-2">
+        <div className="">
           <label className="block">Name</label>
           <input
             type="text"
             value={restaurant.name}
             onChange={(e) => handleChange("name", e.target.value)}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -99,7 +99,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="text"
             value={restaurant.address.street}
             onChange={(e) => handleAddressChange("street", e.target.value)}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -109,7 +109,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="text"
             value={restaurant.address.city}
             onChange={(e) => handleAddressChange("city", e.target.value)}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -119,7 +119,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="text"
             value={restaurant.address.country}
             onChange={(e) => handleAddressChange("country", e.target.value)}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -129,7 +129,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="text"
             value={restaurant.address.state}
             onChange={(e) => handleAddressChange("state", e.target.value)}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -139,7 +139,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="number"
             value={restaurant.address.latitude}
             onChange={(e) => handleAddressChange("latitude", parseFloat(e.target.value))}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -149,7 +149,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="number"
             value={restaurant.address.longitude}
             onChange={(e) => handleAddressChange("longitude", parseFloat(e.target.value))}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -159,7 +159,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="time"
             value={restaurant.openingHour}
             onChange={(e) => handleChange("openingHour", e.target.value)}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -169,7 +169,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="time"
             value={restaurant.closingHour}
             onChange={(e) => handleChange("closingHour", e.target.value)}
-            className="border p-2 w-full"
+            className=""
             required
           />
         </div>
@@ -179,7 +179,7 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="text"
             value={restaurant.phoneNumber}
             onChange={(e) => handleChange("phoneNumber", e.target.value)}
-            className="border p-2 w-full"
+            className=""
           />
         </div>
         <div className="mb-2">
@@ -188,13 +188,13 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onClose
             type="text"
             value={restaurant.website}
             onChange={(e) => handleChange("website", e.target.value)}
-            className="border p-2 w-full"
+            className=""
           />
         </div>
         <div className="mt-4">
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            className=""
             disabled={loading}
           >
             {loading ? "Adding..." : "Add Restaurant"}

@@ -10,7 +10,7 @@ import { jwtDecode } from "jwt-decode";
 type UserContextType = {
   user: UserProfile | null;
   token: string | null;
-  registerUser: (username: string, email: string, password: string) => void;
+  registerUser: (username: string, email: string, password: string, passwordConfirm: string) => void;
   loginUser: (email: string, password: string) => void;
   logout: () => void;
   isLoggedIn: () => boolean;
@@ -58,8 +58,8 @@ export const UserProvider = ({ children }: Props) => {
       .catch(() => notifyWarning("Server error occurred"));
   };
 
-  const registerUser = async (username: string, email: string, password: string) => {
-    await registerAPI(username, email, password)
+  const registerUser = async (username: string, email: string, password: string, confirmPassword: string) => {
+    await registerAPI(username, email, password, confirmPassword)
       .then((res) => {
         if (res) {
           localStorage.setItem("token", res?.data.token);

@@ -65,7 +65,7 @@ public static class ServiceCollectionsExtensions
         return builder;
     }
 
-    public static WebApplicationBuilder AddIdentityAndAuthentication(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddBearerAuthentication(this WebApplicationBuilder builder)
     {
         builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
         {
@@ -78,7 +78,7 @@ public static class ServiceCollectionsExtensions
 
             options.User.RequireUniqueEmail = false;
         })
-    .AddEntityFrameworkStores<AppDbContext>();
+        .AddEntityFrameworkStores<AppDbContext>();
 
         builder.Services.AddAuthentication(options =>
         {
